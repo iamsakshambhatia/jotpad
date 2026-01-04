@@ -1,61 +1,61 @@
-import { DarkTheme, DefaultTheme, type Theme } from '@react-navigation/native';
- 
+import { DarkTheme, DefaultTheme, type Theme } from "@react-navigation/native";
+
 export const THEME = {
   light: {
-    background: 'hsl(0 0% 100%)',
-    foreground: 'hsl(0 0% 3.9%)',
-    card: 'hsl(0 0% 100%)',
-    cardForeground: 'hsl(0 0% 3.9%)',
-    popover: 'hsl(0 0% 100%)',
-    popoverForeground: 'hsl(0 0% 3.9%)',
-    primary: 'hsl(0 0% 9%)',
-    primaryForeground: 'hsl(0 0% 98%)',
-    secondary: 'hsl(0 0% 96.1%)',
-    secondaryForeground: 'hsl(0 0% 9%)',
-    muted: 'hsl(0 0% 96.1%)',
-    mutedForeground: 'hsl(0 0% 45.1%)',
-    accent: 'hsl(0 0% 96.1%)',
-    accentForeground: 'hsl(0 0% 9%)',
-    destructive: 'hsl(0 84.2% 60.2%)',
-    border: 'hsl(0 0% 89.8%)',
-    input: 'hsl(0 0% 89.8%)',
-    ring: 'hsl(0 0% 63%)',
-    radius: '0.625rem',
-    chart1: 'hsl(12 76% 61%)',
-    chart2: 'hsl(173 58% 39%)',
-    chart3: 'hsl(197 37% 24%)',
-    chart4: 'hsl(43 74% 66%)',
-    chart5: 'hsl(27 87% 67%)',
+    background: "hsl(0 0% 100%)",
+    foreground: "hsl(0 0% 3.9%)",
+    card: "hsl(0 0% 100%)",
+    cardForeground: "hsl(0 0% 3.9%)",
+    popover: "hsl(0 0% 100%)",
+    popoverForeground: "hsl(0 0% 3.9%)",
+    primary: "hsl(217 89% 54%)", // #1F76F3 - Facilpay blue
+    primaryForeground: "hsl(0 0% 100%)",
+    secondary: "hsl(183 98% 45%)", // #02DEE5 - Facilpay cyan
+    secondaryForeground: "hsl(0 0% 100%)",
+    muted: "hsl(0 0% 96.1%)",
+    mutedForeground: "hsl(0 0% 45.1%)",
+    accent: "hsl(183 98% 45%)", // #02DEE5 - Facilpay cyan
+    accentForeground: "hsl(0 0% 100%)",
+    destructive: "hsl(0 84.2% 60.2%)",
+    border: "hsl(0 0% 89.8%)",
+    input: "hsl(0 0% 89.8%)",
+    ring: "hsl(217 89% 54%)", // #1F76F3 - Facilpay blue
+    radius: "0.625rem",
+    chart1: "hsl(217 89% 54%)", // #1F76F3
+    chart2: "hsl(183 98% 45%)", // #02DEE5
+    chart3: "hsl(197 37% 24%)",
+    chart4: "hsl(43 74% 66%)",
+    chart5: "hsl(27 87% 67%)",
   },
   dark: {
-    background: 'hsl(0 0% 3.9%)',
-    foreground: 'hsl(0 0% 98%)',
-    card: 'hsl(0 0% 3.9%)',
-    cardForeground: 'hsl(0 0% 98%)',
-    popover: 'hsl(0 0% 3.9%)',
-    popoverForeground: 'hsl(0 0% 98%)',
-    primary: 'hsl(0 0% 98%)',
-    primaryForeground: 'hsl(0 0% 9%)',
-    secondary: 'hsl(0 0% 14.9%)',
-    secondaryForeground: 'hsl(0 0% 98%)',
-    muted: 'hsl(0 0% 14.9%)',
-    mutedForeground: 'hsl(0 0% 63.9%)',
-    accent: 'hsl(0 0% 14.9%)',
-    accentForeground: 'hsl(0 0% 98%)',
-    destructive: 'hsl(0 70.9% 59.4%)',
-    border: 'hsl(0 0% 14.9%)',
-    input: 'hsl(0 0% 14.9%)',
-    ring: 'hsl(300 0% 45%)',
-    radius: '0.625rem',
-    chart1: 'hsl(220 70% 50%)',
-    chart2: 'hsl(160 60% 45%)',
-    chart3: 'hsl(30 80% 55%)',
-    chart4: 'hsl(280 65% 60%)',
-    chart5: 'hsl(340 75% 55%)',
+    background: "hsl(220 30% 8%)", // Deep dark blue-gray inspired by Facilpay
+    foreground: "hsl(0 0% 98%)",
+    card: "hsl(220 25% 12%)",
+    cardForeground: "hsl(0 0% 98%)",
+    popover: "hsl(220 25% 12%)",
+    popoverForeground: "hsl(0 0% 98%)",
+    primary: "hsl(217 89% 64%)", // Brighter blue for dark mode
+    primaryForeground: "hsl(220 30% 8%)",
+    secondary: "hsl(183 98% 55%)", // Brighter cyan for dark mode
+    secondaryForeground: "hsl(220 30% 8%)",
+    muted: "hsl(220 20% 18%)",
+    mutedForeground: "hsl(0 0% 63.9%)",
+    accent: "hsl(183 98% 55%)", // Brighter cyan for dark mode
+    accentForeground: "hsl(220 30% 8%)",
+    destructive: "hsl(0 70.9% 59.4%)",
+    border: "hsl(220 20% 20%)",
+    input: "hsl(220 20% 20%)",
+    ring: "hsl(217 89% 64%)", // Brighter blue for dark mode
+    radius: "0.625rem",
+    chart1: "hsl(217 89% 64%)", // #1F76F3 variant
+    chart2: "hsl(183 98% 55%)", // #02DEE5 variant
+    chart3: "hsl(30 80% 55%)",
+    chart4: "hsl(280 65% 60%)",
+    chart5: "hsl(340 75% 55%)",
   },
 };
- 
-export const NAV_THEME: Record<'light' | 'dark', Theme> = {
+
+export const NAV_THEME: Record<"light" | "dark", Theme> = {
   light: {
     ...DefaultTheme,
     colors: {
