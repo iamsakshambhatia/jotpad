@@ -1,8 +1,7 @@
 import "@/global.css";
 
-import { NAV_THEME } from "@/lib/theme";
+import { NAV_THEME, THEME } from "@/lib/theme";
 import { useThemeStore } from "@/lib/store/theme-store";
-import { ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -25,6 +24,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { useFonts } from "expo-font";
+import { ThemeProvider } from "@react-navigation/native";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,9 +63,14 @@ export default function RootLayout() {
       <GestureHandlerRootView className="flex-1">
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
-            <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
+            <ThemeProvider value={theme === "dark" ? NAV_THEME.dark : NAV_THEME.light}>
               <StatusBar style={theme === "dark" ? "light" : "dark"} />
-              <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+              <SafeAreaView
+                style={{
+                  flex: 1,
+                  backgroundColor: THEME[theme ?? "light"].background,
+                }}
+              >
                 <Stack
                   screenOptions={{
                     headerShown: false,
