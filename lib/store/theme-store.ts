@@ -10,7 +10,7 @@ interface ThemeStore {
   setTheme: (theme: Theme) => void;
 }
 
-const STORAGE_KEY = "@jotpad/theme";
+const STORAGE_KEY = "@jotpad-theme";
 
 export const useThemeStore = create<ThemeStore>()(
   persist(
