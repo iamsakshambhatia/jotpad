@@ -7,7 +7,7 @@ export const axiosInstance = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  timeout: 30000,
+  timeout: 60000,
 });
 
 axiosInstance.interceptors.request.use(
@@ -49,12 +49,14 @@ axiosInstance.interceptors.response.use(
       try {
         const refreshToken = useAuthStore.getState().refreshToken;
         if (refreshToken) {
-          const { data } = await axiosInstance.post<{
-            accessToken: string;
-            refreshToken: string;
-          }>("/auth/refresh", { refresh_token: refreshToken });
-          const newToken = data.accessToken;
-          const newRefreshToken = data.refreshToken;
+          const { data } = await axios.post<{
+            access_token: string;
+            refresh_token: string;
+          }>(`${process.env.EXPO_PUBLIC_API_URL}/api/v1/refresh`, {
+            refresh_token: refreshToken,
+          });
+          const newToken = data.access_token;
+          const newRefreshToken = data.refresh_token;
           useAuthStore.setState({
             token: newToken,
             refreshToken: newRefreshToken,

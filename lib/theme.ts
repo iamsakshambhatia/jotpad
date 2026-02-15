@@ -1,59 +1,74 @@
 import { DarkTheme, DefaultTheme, type Theme } from "@react-navigation/native";
+import { useThemeStore } from "@/lib/store/theme-store";
+import { useColorScheme } from "react-native";
 
 export const THEME = {
   light: {
-    background: "hsl(0 0% 100%)",
-    foreground: "hsl(0 0% 3.9%)",
-    card: "hsl(0 0% 100%)",
-    cardForeground: "hsl(0 0% 3.9%)",
-    popover: "hsl(0 0% 100%)",
-    popoverForeground: "hsl(0 0% 3.9%)",
-    primary: "hsl(217 89% 54%)", // #1F76F3 - Facilpay blue
-    primaryForeground: "hsl(0 0% 100%)",
-    secondary: "hsl(183 98% 45%)", // #02DEE5 - Facilpay cyan
-    secondaryForeground: "hsl(0 0% 100%)",
-    muted: "hsl(0 0% 96.1%)",
-    mutedForeground: "hsl(0 0% 45.1%)",
-    accent: "hsl(183 98% 45%)", // #02DEE5 - Facilpay cyan
-    accentForeground: "hsl(0 0% 100%)",
-    destructive: "hsl(0 84.2% 60.2%)",
-    border: "hsl(0 0% 89.8%)",
-    input: "hsl(0 0% 89.8%)",
-    ring: "hsl(217 89% 54%)", // #1F76F3 - Facilpay blue
-    radius: "0.625rem",
-    chart1: "hsl(217 89% 54%)", // #1F76F3
-    chart2: "hsl(183 98% 45%)", // #02DEE5
-    chart3: "hsl(197 37% 24%)",
-    chart4: "hsl(43 74% 66%)",
-    chart5: "hsl(27 87% 67%)",
+    background: "#FFFFFF",
+    foreground: "#000000",
+    card: "#F4F4F5",
+    cardForeground: "#000000",
+    popover: "#FFFFFF",
+    popoverForeground: "#000000",
+    primary: "#000000",
+    primaryForeground: "#FFFFFF",
+    secondary: "#F4F4F5",
+    secondaryForeground: "#000000",
+    muted: "#F4F4F5",
+    mutedForeground: "#71717A",
+    accent: "#000000",
+    accentForeground: "#FFFFFF",
+    destructive: "#EF4444",
+    border: "#E4E4E7",
+    borderSubtle: "#F4F4F5",
+    input: "#F4F4F5",
+    ring: "#000000",
+    tertiary: "#A1A1AA",
+    tabInactive: "#A1A1AA",
   },
   dark: {
-    background: "hsl(220 30% 8%)", // Deep dark blue-gray inspired by Facilpay
-    foreground: "hsl(0 0% 98%)",
-    card: "hsl(220 25% 12%)",
-    cardForeground: "hsl(0 0% 98%)",
-    popover: "hsl(220 25% 12%)",
-    popoverForeground: "hsl(0 0% 98%)",
-    primary: "hsl(217 89% 64%)", // Brighter blue for dark mode
-    primaryForeground: "hsl(220 30% 8%)",
-    secondary: "hsl(183 98% 55%)", // Brighter cyan for dark mode
-    secondaryForeground: "hsl(220 30% 8%)",
-    muted: "hsl(220 20% 18%)",
-    mutedForeground: "hsl(0 0% 63.9%)",
-    accent: "hsl(183 98% 55%)", // Brighter cyan for dark mode
-    accentForeground: "hsl(220 30% 8%)",
-    destructive: "hsl(0 70.9% 59.4%)",
-    border: "hsl(220 20% 20%)",
-    input: "hsl(220 20% 20%)",
-    ring: "hsl(217 89% 64%)", // Brighter blue for dark mode
-    radius: "0.625rem",
-    chart1: "hsl(217 89% 64%)", // #1F76F3 variant
-    chart2: "hsl(183 98% 55%)", // #02DEE5 variant
-    chart3: "hsl(30 80% 55%)",
-    chart4: "hsl(280 65% 60%)",
-    chart5: "hsl(340 75% 55%)",
+    background: "#0A0A0F",
+    foreground: "#FAFAFA",
+    card: "#18181B",
+    cardForeground: "#FAFAFA",
+    popover: "#27272A",
+    popoverForeground: "#FAFAFA",
+    primary: "#FFFFFF",
+    primaryForeground: "#000000",
+    secondary: "#18181B",
+    secondaryForeground: "#FAFAFA",
+    muted: "#18181B",
+    mutedForeground: "#A1A1AA",
+    accent: "#FFFFFF",
+    accentForeground: "#000000",
+    destructive: "#EF4444",
+    border: "#3F3F46",
+    borderSubtle: "#27272A",
+    input: "#18181B",
+    ring: "#FFFFFF",
+    tertiary: "#71717A",
+    tabInactive: "#52525B",
   },
 };
+
+export function useResolvedTheme(): "light" | "dark" {
+  const theme = useThemeStore((state) => state.theme);
+  const systemTheme = useColorScheme();
+  if (theme === "system") return systemTheme ?? "light";
+  return theme as "light" | "dark";
+}
+
+export function useColors() {
+  const resolvedTheme = useResolvedTheme();
+  const accentColor = useThemeStore((state) => state.accentColor);
+  const base = THEME[resolvedTheme];
+  if (!accentColor) return base;
+  return {
+    ...base,
+    accent: accentColor,
+    accentForeground: "#FFFFFF",
+  };
+}
 
 export const NAV_THEME: Record<"light" | "dark", Theme> = {
   light: {

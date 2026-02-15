@@ -1,7 +1,6 @@
-import "@/global.css";
+  import "@/global.css";
 
-import { NAV_THEME, THEME } from "@/lib/theme";
-import { useThemeStore } from "@/lib/store/theme-store";
+import { NAV_THEME, useResolvedTheme, THEME } from "@/lib/theme";
 import { PortalHost } from "@rn-primitives/portal";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -17,7 +16,15 @@ import {
   Inter_800ExtraBold,
   Inter_900Black,
 } from "@expo-google-fonts/inter";
-import { ShadowsIntoLight_400Regular } from "@expo-google-fonts/shadows-into-light";
+import {
+  Outfit_300Light,
+  Outfit_400Regular,
+  Outfit_500Medium,
+  Outfit_600SemiBold,
+  Outfit_700Bold,
+  Outfit_800ExtraBold,
+  Outfit_900Black,
+} from "@expo-google-fonts/outfit";
 import React, { useEffect } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -38,8 +45,9 @@ const queryClient = new QueryClient({
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const theme = useThemeStore((state) => state.theme);
-  const [fontsLoaded] = useFonts({
+  const resolvedTheme = useResolvedTheme();
+  const colors = THEME[resolvedTheme];
+  const [fontsLoaded, fontError] = useFonts({
     Inter_100Thin,
     Inter_200ExtraLight,
     Inter_300Light,
@@ -49,38 +57,57 @@ export default function RootLayout() {
     Inter_700Bold,
     Inter_800ExtraBold,
     Inter_900Black,
-    ShadowsIntoLight_400Regular,
+    Outfit_300Light,
+    Outfit_400Regular,
+    Outfit_500Medium,
+    Outfit_600SemiBold,
+    Outfit_700Bold,
+    Outfit_800ExtraBold,
+    Outfit_900Black,
   });
 
   useEffect(() => {
-    if (fontsLoaded) {
+    if (fontsLoaded || fontError) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, fontError]);
+
+  if (!fontsLoaded && !fontError) return null;
 
   return (
     <ErrorBoundary>
-      <GestureHandlerRootView className="flex-1">
+      <GestureHandlerRootView style={{ flex: 1 }}>
         <QueryClientProvider client={queryClient}>
-          <SafeAreaProvider>
-            <ThemeProvider value={theme === "dark" ? NAV_THEME.dark : NAV_THEME.light}>
-              <StatusBar style={theme === "dark" ? "light" : "dark"} />
-              <SafeAreaView
-                style={{
-                  flex: 1,
-                  backgroundColor: THEME[theme ?? "light"].background,
-                }}
-              >
-                <Stack
-                  screenOptions={{
-                    headerShown: false,
-                  }}
-                />
+            <SafeAreaProvider>
+              <ThemeProvider value={resolvedTheme === "dark" ? NAV_THEME.dark : NAV_THEME.light}>
+                <StatusBar style={resolvedTheme === "dark" ? "light" : "dark"} />
+                <SafeAreaView
+                  style={{ flex: 1, backgroundColor: colors.background }}
+                  edges={["top"]}
+                >
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
+                      contentStyle: {
+                        backgroundColor: colors.background,
+                      },
+                    }}
+                  >
+                    <Stack.Screen name="index" />
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="(auth)" />
+                    <Stack.Screen
+                      name="note/[id]"
+                      options={{
+                        animation: "slide_from_right",
+                      }}
+                    />
+                  </Stack>
+                </SafeAreaView>
                 <PortalHost />
                 <Toast />
-              </SafeAreaView>
-            </ThemeProvider>
-          </SafeAreaProvider>
+              </ThemeProvider>
+            </SafeAreaProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>
     </ErrorBoundary>

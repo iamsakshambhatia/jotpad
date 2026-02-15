@@ -11,6 +11,9 @@ importers:
       '@expo-google-fonts/inter':
         specifier: ^0.4.2
         version: 0.4.2
+      '@expo-google-fonts/outfit':
+        specifier: ^0.4.3
+        version: 0.4.3
       '@expo-google-fonts/shadows-into-light':
         specifier: ^0.4.1
         version: 0.4.1
@@ -745,6 +748,9 @@ packages:
 
   '@expo-google-fonts/inter@0.4.2':
     resolution: {integrity: sha512-syfiImMaDmq7cFi0of+waE2M4uSCyd16zgyWxdPOY7fN2VBmSLKEzkfbZgeOjJq61kSqPBNNtXjggiQiSD6gMQ==}
+
+  '@expo-google-fonts/outfit@0.4.3':
+    resolution: {integrity: sha512-2uQmDVJencWLllxds6SG92E+SjxyZfvg7eZKZ5XLHggmm5AuUyQK7lzMAFOUzT6kheq2kJ7BAiubMdjKT32fJg==}
 
   '@expo-google-fonts/shadows-into-light@0.4.1':
     resolution: {integrity: sha512-Iuv25UDxHXpLF1b8YCJqRIxKtr+JGLCoRNldDDpKS1B6N5zuMdQyB9H/83ajT9oSBpfs8jR1XFVfpcFDQ15Y3A==}
@@ -2960,7 +2966,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-dirs@0.1.1:
     resolution: {integrity: sha512-NknMLn7F2J7aflwFOlGdNIuCDpN3VGoSoB+aap3KABFWbHVn1TCgFC+np23J8W2BiZbjfEw3BFBycSMv1AFblg==}
@@ -4152,6 +4158,7 @@ packages:
   tar@7.5.2:
     resolution: {integrity: sha512-7NyxrTE4Anh8km8iEy7o0QYPs+0JKBTj5ZaqHg6B39erLg0qYXN3BijtShwbsNSvQ+LN75+KV+C4QR/f6Gwnpg==}
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   temp-dir@2.0.0:
     resolution: {integrity: sha512-aoBAniQmmwtcKp/7BzsH8Cxzv8OL736p7v1ihGb5e9DJ9kTwGWHrQrVB5+lfVDzfGrdRzXch+ig7LHaY1JTOrg==}
@@ -5091,6 +5098,8 @@ snapshots:
       '@types/hammerjs': 2.0.46
 
   '@expo-google-fonts/inter@0.4.2': {}
+
+  '@expo-google-fonts/outfit@0.4.3': {}
 
   '@expo-google-fonts/shadows-into-light@0.4.1': {}
 
