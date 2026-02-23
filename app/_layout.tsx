@@ -53,6 +53,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const resolvedTheme = useResolvedTheme();
   const colors = THEME[resolvedTheme];
+
   const [dbReady, setDbReady] = useState(false);
   const appState = useRef(AppState.currentState);
   const token = useAuthStore((s) => s.token);
@@ -76,29 +77,25 @@ export default function RootLayout() {
     Outfit_900Black,
   });
 
-  // Initialize database
   useEffect(() => {
     getDatabase()
       .then(() => setDbReady(true))
       .catch((err) => {
         console.error("Failed to init database:", err);
-        setDbReady(true); // Continue even on failure
+        setDbReady(true);
       });
   }, []);
 
-  // Initialize sync engine and network listener
   useEffect(() => {
     syncEngine.init(queryClient);
     useNetworkStore.getState().initNetworkListener(() => {
       syncEngine.triggerSync();
     });
-
     return () => {
       useNetworkStore.getState().stopNetworkListener();
     };
   }, []);
 
-  // Foreground sync
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (appState.current.match(/inactive|background/) && nextAppState === "active" && token) {
@@ -106,11 +103,9 @@ export default function RootLayout() {
       }
       appState.current = nextAppState;
     });
-
     return () => subscription.remove();
   }, [token]);
 
-  // Full sync on login / app launch with token
   useEffect(() => {
     if (token && dbReady) {
       syncEngine.performFullSync();
@@ -131,39 +126,37 @@ export default function RootLayout() {
     <ErrorBoundary>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <QueryClientProvider client={queryClient}>
-            <SafeAreaProvider>
-              <ThemeProvider value={resolvedTheme === "dark" ? NAV_THEME.dark : NAV_THEME.light}>
-                <StatusBar style={resolvedTheme === "dark" ? "light" : "dark"} />
-                <SafeAreaView
-                  style={{ flex: 1, backgroundColor: colors.background }}
-                  edges={["top"]}
+          <SafeAreaProvider>
+            <ThemeProvider value={resolvedTheme === "dark" ? NAV_THEME.dark : NAV_THEME.light}>
+              <StatusBar style={resolvedTheme === "dark" ? "light" : "dark"} />
+              <SafeAreaView
+                style={{ flex: 1, backgroundColor: colors.background }}
+                edges={["top"]}
+              >
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: { backgroundColor: colors.background },
+                  }}
                 >
-                  <Stack
-                    screenOptions={{
-                      headerShown: false,
-                      contentStyle: {
-                        backgroundColor: colors.background,
-                      },
+                  <Stack.Screen name="index" />
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen name="(auth)" />
+                  <Stack.Screen
+                    name="note/[id]"
+                    options={{
+                      presentation: "modal",
+                      animation: "slide_from_bottom",
+                      gestureEnabled: true,
+                      gestureDirection: "vertical",
                     }}
-                  >
-                    <Stack.Screen name="index" />
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen name="(auth)" />
-                    <Stack.Screen
-                      name="note/[id]"
-                      options={{
-                        presentation: "modal",
-                        animation: "slide_from_bottom",
-                        gestureEnabled: true,
-                        gestureDirection: "vertical",
-                      }}
-                    />
-                  </Stack>
-                </SafeAreaView>
-                <PortalHost />
-                <Toast />
-              </ThemeProvider>
-            </SafeAreaProvider>
+                  />
+                </Stack>
+              </SafeAreaView>
+              <PortalHost />
+              <Toast />
+            </ThemeProvider>
+          </SafeAreaProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>
     </ErrorBoundary>

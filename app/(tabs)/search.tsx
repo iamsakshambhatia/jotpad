@@ -36,44 +36,24 @@ export default function SearchScreen() {
   });
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={{ flex: 1, gap: 24, paddingHorizontal: 24, paddingTop: 16 }}>
+    <View className="flex-1 bg-background">
+      <View className="gap-6 px-6 pt-4">
         <Text
-          style={{
-            fontFamily: "Outfit_800ExtraBold",
-            fontSize: 26,
-            letterSpacing: -0.5,
-            color: colors.foreground,
-          }}
+          className="text-foreground"
+          style={{ fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}
         >
           {folderName ?? (show_all === "true" ? "All Notes" : "Search")}
         </Text>
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 12,
-            borderRadius: 26,
-            backgroundColor: colors.input,
-            borderWidth: 1,
-            borderColor: colors.borderSubtle,
-            paddingHorizontal: 18,
-            height: 50,
-          }}
-        >
+        <View className="flex-row items-center gap-3 rounded-[26px] bg-input border border-border-subtle px-[18px] h-[50px]">
           <SearchIcon size={18} color={colors.tertiary} />
           <TextInput
             value={query}
             onChangeText={setQuery}
             placeholder={folderName ? `Search in ${folderName}...` : "Search your notes..."}
             placeholderTextColor={colors.tertiary}
-            style={{
-              flex: 1,
-              fontFamily: "Inter_400Regular",
-              fontSize: 14,
-              color: colors.foreground,
-            }}
+            className="flex-1 text-foreground"
+            style={{ fontFamily: "Inter_400Regular", fontSize: 14 }}
           />
           {query.length > 0 && (
             <Pressable onPress={() => setQuery("")}>
@@ -81,81 +61,65 @@ export default function SearchScreen() {
             </Pressable>
           )}
         </View>
+      </View>
 
-        {isLoading && hasFilter && (
-          <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-            <ActivityIndicator color={colors.accent} />
-          </View>
-        )}
+      {isLoading && hasFilter && (
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator color={colors.accent} />
+        </View>
+      )}
 
-        {!isLoading && hasFilter && notes && (
-          <FlatList
-            data={notes}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ gap: 12, paddingBottom: 100 }}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <NoteCard
-                title={item.title}
-                preview={item.preview}
-                date={format(new Date(item.updated_at), "MMM d, yyyy")}
-                folderName={item.folder?.name ?? "Uncategorized"}
-                isFavorite={item.is_favorite}
-                onPress={() => router.push(`/note/${item.id}`)}
-              />
-            )}
-            ListEmptyComponent={
-              <View style={{ alignItems: "center", gap: 12, paddingTop: 64 }}>
-                <SearchIcon size={40} color={colors.tertiary} />
-                <Text
-                  style={{
-                    fontFamily: "Inter_400Regular",
-                    fontSize: 14,
-                    color: colors.mutedForeground,
-                  }}
-                >
-                  No notes found
-                </Text>
-              </View>
-            }
-          />
-        )}
+      {!isLoading && hasFilter && notes && (
+        <FlatList
+          data={notes}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ gap: 12, paddingHorizontal: 24, paddingTop: 24, paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <NoteCard
+              title={item.title}
+              preview={item.preview}
+              date={format(new Date(item.updated_at), "MMM d, yyyy")}
+              folderName={item.folder?.name ?? "Uncategorized"}
+              isFavorite={item.is_favorite}
+              onPress={() => router.push(`/note/${item.id}`)}
+            />
+          )}
+          ListEmptyComponent={
+            <View className="items-center gap-3 pt-16">
+              <SearchIcon size={40} color={colors.tertiary} />
+              <Text
+                className="text-muted-foreground"
+                style={{ fontFamily: "Inter_400Regular", fontSize: 14 }}
+              >
+                No notes found
+              </Text>
+            </View>
+          }
+        />
+      )}
 
-        {!hasFilter && (
-          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 12 }}>
-            <View
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 40,
-                backgroundColor: colors.accentSurface,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+      {!hasFilter && (
+        <View className="absolute inset-0 items-center justify-center" pointerEvents="none">
+          <View className="items-center gap-3">
+            <View className="w-20 h-20 rounded-full bg-accent-surface items-center justify-center">
               <SearchIcon size={32} color={colors.accent} />
             </View>
             <Text
-              style={{
-                fontFamily: "Inter_500Medium",
-                fontSize: 15,
-                color: colors.mutedForeground,
-              }}
+              className="text-muted-foreground"
+              style={{ fontFamily: "Inter_500Medium", fontSize: 15 }}
             >
               Search your notes
             </Text>
             <Text
-              style={{
-                fontFamily: "Inter_400Regular",
-                fontSize: 13,
-                color: colors.tertiary,
-              }}
+              className="text-tertiary"
+              style={{ fontFamily: "Inter_400Regular", fontSize: 13 }}
             >
               Find by title, content, or keyword
             </Text>
           </View>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 }

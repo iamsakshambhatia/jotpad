@@ -51,27 +51,10 @@ export function SearchBar({ onPress }: SearchBarProps) {
 
   return (
     <Pressable onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 12,
-          borderRadius: 26,
-          backgroundColor: colors.input,
-          borderWidth: 1,
-          borderColor: colors.borderSubtle,
-          paddingHorizontal: 18,
-          height: 50,
-        }}
-      >
+      <View className="flex-row items-center gap-3 rounded-[26px] bg-input border border-border-subtle px-[18px] h-[50px]">
         <Search size={18} color={colors.tertiary} />
         <Animated.Text
-          style={{
-            fontFamily: "Inter_400Regular",
-            fontSize: 14,
-            color: colors.tertiary,
-            opacity,
-          }}
+          style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: colors.tertiary, opacity }}
         >
           {displayText}
           <Animated.Text style={{ color: colors.tertiary }}>|</Animated.Text>

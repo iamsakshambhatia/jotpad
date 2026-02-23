@@ -84,7 +84,7 @@ export function InputDialog({
           }}
         >
           <Pressable
-            style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+            className="absolute top-0 left-0 right-0 bottom-0"
             onPress={onCancel}
           />
           <Animated.View
@@ -101,12 +101,8 @@ export function InputDialog({
             }}
           >
             <Text
-              style={{
-                fontFamily: "Outfit_700Bold",
-                fontSize: 18,
-                color: colors.foreground,
-                textAlign: "center",
-              }}
+              className="text-foreground text-center"
+              style={{ fontFamily: "Outfit_700Bold", fontSize: 18 }}
             >
               {title}
             </Text>
@@ -119,36 +115,19 @@ export function InputDialog({
               placeholderTextColor={colors.tertiary}
               onSubmitEditing={handleSubmit}
               returnKeyType="done"
-              style={{
-                height: 48,
-                borderRadius: 12,
-                backgroundColor: colors.background,
-                paddingHorizontal: 16,
-                fontFamily: "Inter_400Regular",
-                fontSize: 15,
-                color: colors.foreground,
-              }}
+              className="h-12 rounded-xl bg-background px-4"
+              style={{ fontFamily: "Inter_400Regular", fontSize: 15, color: colors.foreground }}
             />
 
-            <View style={{ flexDirection: "row", gap: 12 }}>
+            <View className="flex-row gap-3">
               <Pressable
                 onPress={onCancel}
-                style={({ pressed }) => ({
-                  flex: 1,
-                  height: 44,
-                  borderRadius: 12,
-                  backgroundColor: colors.background,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  opacity: pressed ? 0.7 : 1,
-                })}
+                className="flex-1 h-11 rounded-xl bg-background items-center justify-center"
+                style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
               >
                 <Text
-                  style={{
-                    fontFamily: "Outfit_600SemiBold",
-                    fontSize: 15,
-                    color: colors.mutedForeground,
-                  }}
+                  className="text-muted-foreground"
+                  style={{ fontFamily: "Outfit_600SemiBold", fontSize: 15 }}
                 >
                   Cancel
                 </Text>
@@ -156,13 +135,9 @@ export function InputDialog({
 
               <Pressable
                 onPress={handleSubmit}
+                className="flex-1 h-11 rounded-xl items-center justify-center"
                 style={({ pressed }) => ({
-                  flex: 1,
-                  height: 44,
-                  borderRadius: 12,
                   backgroundColor: colors.accent,
-                  alignItems: "center",
-                  justifyContent: "center",
                   opacity: pressed ? 0.85 : 1,
                 })}
               >

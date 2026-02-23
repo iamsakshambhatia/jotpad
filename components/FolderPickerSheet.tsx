@@ -24,72 +24,43 @@ export function FolderPickerSheet({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={{ flex: 1 }} onPress={onClose}>
-        <View style={{ flex: 1, justifyContent: "flex-end" }}>
+      <Pressable className="flex-1" onPress={onClose}>
+        <View className="flex-1 justify-end">
           <Pressable onPress={(e) => e.stopPropagation()}>
             <View
-              style={{
-                backgroundColor: colors.card,
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 24,
-                paddingBottom: Math.max(insets.bottom, 16),
-                maxHeight: 400,
-              }}
+              className="bg-card rounded-t-3xl max-h-[400px]"
+              style={{ paddingBottom: Math.max(insets.bottom, 16) }}
             >
               {/* Drag handle */}
-              <View style={{ alignItems: "center", paddingTop: 12, paddingBottom: 8 }}>
-                <View
-                  style={{
-                    width: 36,
-                    height: 5,
-                    borderRadius: 3,
-                    backgroundColor: colors.tertiary,
-                    opacity: 0.4,
-                  }}
-                />
+              <View className="items-center pt-3 pb-2">
+                <View className="w-9 h-[5px] rounded-sm bg-tertiary opacity-40" />
               </View>
 
               {/* Header */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  paddingHorizontal: 20,
-                  paddingBottom: 16,
-                }}
-              >
+              <View className="flex-row items-center justify-between px-5 pb-4">
                 <Text
-                  style={{
-                    fontFamily: "Outfit_700Bold",
-                    fontSize: 18,
-                    letterSpacing: -0.3,
-                    color: colors.foreground,
-                  }}
+                  className="text-foreground"
+                  style={{ fontFamily: "Outfit_700Bold", fontSize: 18, letterSpacing: -0.3 }}
                 >
                   Move to Folder
                 </Text>
-                <Pressable onPress={onClose} style={{ padding: 4 }}>
+                <Pressable onPress={onClose} className="p-1">
                   <X size={20} color={colors.mutedForeground} />
                 </Pressable>
               </View>
 
-              <View style={{ height: 1, backgroundColor: colors.borderSubtle }} />
+              <View className="h-px bg-border-subtle" />
 
               {/* Folder list */}
-              <ScrollView style={{ maxHeight: 300 }} showsVerticalScrollIndicator={false}>
+              <ScrollView className="max-h-[300px]" showsVerticalScrollIndicator={false}>
                 {folders.map((folder) => {
                   const isSelected = selectedFolderId === folder.id;
                   return (
                     <Pressable
                       key={folder.id}
                       onPress={() => onSelect(folder.id)}
+                      className="flex-row items-center gap-3 px-5 py-3.5"
                       style={({ pressed }) => ({
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 12,
-                        paddingHorizontal: 20,
-                        paddingVertical: 14,
                         backgroundColor: isSelected ? colors.accentSurface : "transparent",
                         opacity: pressed ? 0.7 : 1,
                       })}
@@ -99,11 +70,11 @@ export function FolderPickerSheet({
                         color={isSelected ? colors.accent : colors.mutedForeground}
                       />
                       <Text
+                        className="flex-1"
                         style={{
                           fontFamily: isSelected ? "Outfit_600SemiBold" : "Inter_400Regular",
                           fontSize: 15,
                           color: isSelected ? colors.accent : colors.foreground,
-                          flex: 1,
                         }}
                       >
                         {folder.name}

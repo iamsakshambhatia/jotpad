@@ -17,87 +17,46 @@ export function NoteCard({ title, preview, date, folderName, isFavorite, onPress
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => ({
-        flexDirection: "row",
-        borderRadius: 20,
-        backgroundColor: colors.card,
-        borderWidth: 1,
-        borderColor: colors.borderSubtle,
-        padding: 16,
-        gap: 10,
-        opacity: pressed ? 0.7 : 1,
-        overflow: "hidden",
-      })}
+      className="flex-row rounded-[20px] bg-card border border-border-subtle p-4 gap-2.5 overflow-hidden"
+      style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
     >
-      {/* Favorite accent bar */}
       {isFavorite && (
         <View
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 8,
-            bottom: 8,
-            width: 3,
-            borderRadius: 2,
-            backgroundColor: colors.accent,
-          }}
+          className="absolute left-0 top-2 bottom-2 w-[3px] rounded-sm"
+          style={{ backgroundColor: colors.accent }}
         />
       )}
 
-      <View style={{ flex: 1, gap: 10 }}>
+      <View className="flex-1 gap-2.5">
         <Text
-          style={{
-            fontFamily: "Outfit_600SemiBold",
-            fontSize: 16,
-            letterSpacing: -0.3,
-            color: colors.foreground,
-          }}
+          className="text-foreground"
+          style={{ fontFamily: "Outfit_600SemiBold", fontSize: 16, letterSpacing: -0.3 }}
           numberOfLines={1}
         >
           {title}
         </Text>
 
         <Text
-          style={{
-            fontFamily: "Inter_400Regular",
-            fontSize: 13,
-            lineHeight: 19,
-            color: colors.mutedForeground,
-          }}
+          className="text-muted-foreground"
+          style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19 }}
           numberOfLines={2}
         >
           {preview}
         </Text>
 
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View className="flex-row items-center justify-between">
           <Text
-            style={{
-              fontFamily: "Inter_500Medium",
-              fontSize: 11,
-              color: colors.tertiary,
-            }}
+            className="text-tertiary"
+            style={{ fontFamily: "Inter_500Medium", fontSize: 11 }}
           >
             {date}
           </Text>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 4,
-              borderRadius: 8,
-              backgroundColor: colors.muted,
-              paddingHorizontal: 8,
-              paddingVertical: 3,
-            }}
-          >
+          <View className="flex-row items-center gap-1 rounded-lg bg-muted px-2 py-[3px]">
             <Folder size={11} color={colors.tertiary} />
             <Text
-              style={{
-                fontFamily: "Inter_500Medium",
-                fontSize: 10,
-                color: colors.tertiary,
-              }}
+              className="text-tertiary"
+              style={{ fontFamily: "Inter_500Medium", fontSize: 10 }}
             >
               {folderName}
             </Text>

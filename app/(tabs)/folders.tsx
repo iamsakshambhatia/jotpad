@@ -86,48 +86,25 @@ export default function FoldersScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View className="flex-1 bg-background">
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 24, paddingBottom: 100 }}
         refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => refetch()}
-            tintColor={colors.accent}
-          />
+          <RefreshControl refreshing={false} onRefresh={() => refetch()} tintColor={colors.accent} />
         }
       >
         {/* Header */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: 24,
-            paddingTop: 16,
-          }}
-        >
+        <View className="flex-row items-center justify-between px-6 pt-4">
           <Text
-            style={{
-              fontFamily: "Outfit_800ExtraBold",
-              fontSize: 26,
-              letterSpacing: -0.5,
-              color: colors.foreground,
-            }}
+            className="text-foreground"
+            style={{ fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}
           >
             Folders
           </Text>
           <Pressable
             onPress={() => setShowInput(!showInput)}
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 12,
-              backgroundColor: colors.accentSurface,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            className="w-9 h-9 rounded-xl bg-accent-surface items-center justify-center"
           >
             <Plus size={20} color={colors.accent} />
           </Pressable>
@@ -135,7 +112,7 @@ export default function FoldersScreen() {
 
         {/* New Folder Input */}
         {showInput && (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 24 }}>
+          <View className="flex-row items-center gap-3 px-6">
             <TextInput
               value={newFolderName}
               onChangeText={setNewFolderName}
@@ -143,37 +120,15 @@ export default function FoldersScreen() {
               placeholderTextColor={colors.tertiary}
               autoFocus
               onSubmitEditing={handleCreateFolder}
-              style={{
-                flex: 1,
-                height: 48,
-                borderRadius: 16,
-                backgroundColor: colors.input,
-                borderWidth: 1,
-                borderColor: colors.borderSubtle,
-                paddingHorizontal: 16,
-                fontFamily: "Inter_400Regular",
-                fontSize: 14,
-                color: colors.foreground,
-              }}
+              className="flex-1 h-12 rounded-2xl bg-input border border-border-subtle px-4 text-foreground"
+              style={{ fontFamily: "Inter_400Regular", fontSize: 14 }}
             />
             <Pressable
               onPress={handleCreateFolder}
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 14,
-                backgroundColor: colors.accent,
-                height: 48,
-                paddingHorizontal: 20,
-              }}
+              className="items-center justify-center rounded-[14px] h-12 px-5"
+              style={{ backgroundColor: colors.accent }}
             >
-              <Text
-                style={{
-                  fontFamily: "Outfit_600SemiBold",
-                  fontSize: 14,
-                  color: "#FFFFFF",
-                }}
-              >
+              <Text style={{ fontFamily: "Outfit_600SemiBold", fontSize: 14, color: "#FFFFFF" }}>
                 Add
               </Text>
             </Pressable>
@@ -181,26 +136,14 @@ export default function FoldersScreen() {
         )}
 
         {/* Folders List */}
-        <View style={{ paddingHorizontal: 24 }}>
+        <View className="px-6">
           {isLoading ? (
             <ActivityIndicator color={colors.accent} />
           ) : (
-            <View
-              style={{
-                overflow: "hidden",
-                borderRadius: 20,
-                backgroundColor: colors.card,
-                borderWidth: 1,
-                borderColor: colors.borderSubtle,
-              }}
-            >
+            <View className="overflow-hidden rounded-[20px] bg-card border border-border-subtle">
               {folders?.map((folder, index) => (
                 <View key={folder.id}>
-                  {index > 0 && (
-                    <View
-                      style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }}
-                    />
-                  )}
+                  {index > 0 && <View className="h-px bg-border-subtle mx-4" />}
                   <FolderItem
                     name={folder.name}
                     count={folderNoteCounts(folder.id)}
@@ -215,25 +158,13 @@ export default function FoldersScreen() {
                 </View>
               ))}
               {folders?.length === 0 && (
-                <View style={{ alignItems: "center", gap: 12, paddingVertical: 40 }}>
-                  <View
-                    style={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: 32,
-                      backgroundColor: colors.accentSurface,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+                <View className="items-center gap-3 py-10">
+                  <View className="w-16 h-16 rounded-full bg-accent-surface items-center justify-center">
                     <Folder size={28} color={colors.accent} />
                   </View>
                   <Text
-                    style={{
-                      fontFamily: "Inter_400Regular",
-                      fontSize: 14,
-                      color: colors.mutedForeground,
-                    }}
+                    className="text-muted-foreground"
+                    style={{ fontFamily: "Inter_400Regular", fontSize: 14 }}
                   >
                     No folders yet. Tap + to create one.
                   </Text>

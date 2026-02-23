@@ -15,45 +15,23 @@ export function FolderItem({ name, count, icon: FolderIcon, onPress }: FolderIte
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => ({
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 14,
-        opacity: pressed ? 0.7 : 1,
-      })}
+      className="flex-row items-center gap-3 px-4 py-3.5"
+      style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
     >
-      <View
-        style={{
-          width: 36,
-          height: 36,
-          borderRadius: 10,
-          backgroundColor: colors.accentSurface,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <View className="w-9 h-9 rounded-[10px] bg-accent-surface items-center justify-center">
         <FolderIcon size={18} color={colors.accent} />
       </View>
 
       <Text
-        style={{
-          fontFamily: "Outfit_600SemiBold",
-          fontSize: 15,
-          color: colors.foreground,
-          flex: 1,
-        }}
+        className="flex-1 text-foreground"
+        style={{ fontFamily: "Outfit_600SemiBold", fontSize: 15 }}
       >
         {name}
       </Text>
 
       <Text
-        style={{
-          fontFamily: "Inter_500Medium",
-          fontSize: 13,
-          color: colors.tertiary,
-        }}
+        className="text-tertiary"
+        style={{ fontFamily: "Inter_500Medium", fontSize: 13 }}
       >
         {count}
       </Text>

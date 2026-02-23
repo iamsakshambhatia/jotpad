@@ -10,17 +10,10 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
 
   return (
     <View
-      style={{
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        alignItems: "center",
-        paddingBottom: Math.max(insets.bottom, 12),
-      }}
+      className="absolute bottom-0 left-0 right-0 items-center"
+      style={{ paddingBottom: Math.max(insets.bottom, 12) }}
       pointerEvents="box-none"
     >
-      {/* Gradient fade above tab bar */}
       <LinearGradient
         colors={[colors.background + "00", colors.background + "CC", colors.background]}
         style={{
@@ -33,25 +26,7 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
         pointerEvents="none"
       />
 
-      {/* Floating pill */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: colors.card,
-          borderRadius: 34,
-          borderWidth: 1,
-          borderColor: colors.borderSubtle,
-          paddingHorizontal: 8,
-          paddingVertical: 6,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.08,
-          shadowRadius: 20,
-          elevation: 8,
-          gap: 4,
-        }}
-      >
+      <View className="flex-row items-center bg-card rounded-[34px] border border-border-subtle px-2 py-1.5 gap-1 shadow-lg">
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
@@ -77,13 +52,9 @@ export function FloatingTabBar({ state, descriptors, navigation }: BottomTabBarP
             <Pressable
               key={route.key}
               onPress={onPress}
+              className="flex-row items-center gap-1.5 py-2.5 rounded-[28px]"
               style={({ pressed }) => ({
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 6,
                 paddingHorizontal: isFocused ? 16 : 14,
-                paddingVertical: 10,
-                borderRadius: 28,
                 backgroundColor: isFocused ? colors.accentSurface : "transparent",
                 opacity: pressed ? 0.7 : 1,
               })}

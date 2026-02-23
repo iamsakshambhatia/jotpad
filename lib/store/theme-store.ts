@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Appearance } from "react-native";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -16,6 +17,10 @@ interface ThemeStore {
 
 const STORAGE_KEY = "@jotpad-theme";
 
+function syncAppearance(mode: ThemeMode) {
+  Appearance.setColorScheme(mode === "system" ? null : mode);
+}
+
 export const useThemeStore = create<ThemeStore>()(
   persist(
     (set) => ({
@@ -23,6 +28,7 @@ export const useThemeStore = create<ThemeStore>()(
       accentColor: null,
       fontSize: "medium",
       setTheme: (newTheme: ThemeMode) => {
+        syncAppearance(newTheme);
         set({ theme: newTheme });
       },
       setAccentColor: (color: string | null) => {
@@ -35,6 +41,9 @@ export const useThemeStore = create<ThemeStore>()(
     {
       name: STORAGE_KEY,
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state) => {
+        if (state) syncAppearance(state.theme);
+      },
     }
   )
 );

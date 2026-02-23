@@ -72,7 +72,6 @@ export default function NoteEditorScreen() {
     }
   }, [note]);
 
-  // Set default folder for new notes
   useEffect(() => {
     if (isNew && folders && folders.length > 0 && !selectedFolderId) {
       setSelectedFolderId(folders[0].id);
@@ -86,11 +85,7 @@ export default function NoteEditorScreen() {
     saveTimerRef.current = setTimeout(() => {
       updateNote.mutate(
         { id: note.id, title: newTitle, content: newContent },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["notes"] });
-          },
-        }
+        { onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notes"] }) }
       );
     }, 1000);
   };
@@ -111,11 +106,7 @@ export default function NoteEditorScreen() {
     setIsFavorite(newFav);
     updateNote.mutate(
       { id: note.id, is_favorite: newFav },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["notes"] });
-        },
-      }
+      { onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notes"] }) }
     );
   };
 
@@ -164,11 +155,7 @@ export default function NoteEditorScreen() {
     }
 
     createNote.mutate(
-      {
-        title: title.trim(),
-        content,
-        folder_id: selectedFolderId,
-      },
+      { title: title.trim(), content, folder_id: selectedFolderId },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["notes"] });
@@ -185,9 +172,7 @@ export default function NoteEditorScreen() {
 
   if (!isNew && isLoading) {
     return (
-      <View
-        style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background }}
-      >
+      <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator color={colors.accent} />
       </View>
     );
@@ -196,75 +181,44 @@ export default function NoteEditorScreen() {
   const selectedFolderName = folders?.find((f) => f.id === selectedFolderId)?.name ?? note?.folder?.name ?? "Uncategorized";
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View className="flex-1 bg-background">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+        className="flex-1"
       >
         {/* Drag Handle */}
-        <View style={{ alignItems: "center", paddingTop: 10, paddingBottom: 4 }}>
-          <View
-            style={{
-              width: 36,
-              height: 5,
-              borderRadius: 3,
-              backgroundColor: colors.tertiary,
-              opacity: 0.4,
-            }}
-          />
+        <View className="items-center pt-2.5 pb-1">
+          <View className="w-9 h-[5px] rounded-sm bg-tertiary opacity-40" />
         </View>
 
         {/* Nav Bar */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-          }}
-        >
+        <View className="flex-row items-center justify-between px-4 py-2">
           <Pressable
             onPress={() => router.back()}
-            style={({ pressed }) => ({
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 6,
-              opacity: pressed ? 0.6 : 1,
-            })}
+            className="flex-row items-center gap-1.5"
+            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
           >
             <ArrowLeft size={22} color={colors.foreground} />
             <Text
-              style={{
-                fontFamily: "Inter_500Medium",
-                fontSize: 15,
-                color: colors.foreground,
-              }}
+              className="text-foreground"
+              style={{ fontFamily: "Inter_500Medium", fontSize: 15 }}
             >
               Back
             </Text>
           </Pressable>
 
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+          <View className="flex-row items-center gap-4">
             {isNew ? (
               <Pressable
                 onPress={handleSaveNew}
                 disabled={createNote.isPending}
+                className="px-4 py-2 rounded-[20px]"
                 style={({ pressed }) => ({
                   backgroundColor: colors.accent,
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
-                  borderRadius: 20,
                   opacity: pressed ? 0.8 : 1,
                 })}
               >
-                <Text
-                  style={{
-                    fontFamily: "Outfit_700Bold",
-                    fontSize: 14,
-                    color: "#FFFFFF",
-                  }}
-                >
+                <Text style={{ fontFamily: "Outfit_700Bold", fontSize: 14, color: "#FFFFFF" }}>
                   {createNote.isPending ? "Saving..." : "Save"}
                 </Text>
               </Pressable>
@@ -286,59 +240,31 @@ export default function NoteEditorScreen() {
         </View>
 
         {/* Meta Info Row */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 16,
-            paddingHorizontal: 24,
-            paddingVertical: 8,
-          }}
-        >
+        <View className="flex-row items-center gap-4 px-6 py-2">
           {!isNew && note && (
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <View className="flex-row items-center gap-1.5">
               <Calendar size={13} color={colors.tertiary} />
-              <Text
-                style={{
-                  fontFamily: "Inter_500Medium",
-                  fontSize: 12,
-                  color: colors.tertiary,
-                }}
-              >
+              <Text className="text-tertiary" style={{ fontFamily: "Inter_500Medium", fontSize: 12 }}>
                 {format(new Date(note.updated_at), "MMM d, yyyy")}
               </Text>
             </View>
           )}
           <Pressable
             onPress={() => setShowFolderPicker(true)}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 6,
-              backgroundColor: colors.accentSurface,
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              borderRadius: 12,
-            }}
+            className="flex-row items-center gap-1.5 bg-accent-surface px-2.5 py-[5px] rounded-xl"
           >
             <Folder size={13} color={colors.accent} />
-            <Text
-              style={{
-                fontFamily: "Inter_500Medium",
-                fontSize: 12,
-                color: colors.accent,
-              }}
-            >
+            <Text style={{ fontFamily: "Inter_500Medium", fontSize: 12, color: colors.accent }}>
               {selectedFolderName}
             </Text>
           </Pressable>
         </View>
 
-        <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 24 }} />
+        <View className="h-px bg-border-subtle mx-6" />
 
         {/* Editor Content */}
         <ScrollView
-          style={{ flex: 1 }}
+          className="flex-1"
           contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24, paddingTop: 16, gap: 12 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -348,12 +274,8 @@ export default function NoteEditorScreen() {
             onChangeText={handleTitleChange}
             placeholder="Note title"
             placeholderTextColor={colors.tertiary}
-            style={{
-              fontFamily: "Outfit_800ExtraBold",
-              fontSize: 24,
-              letterSpacing: -0.5,
-              color: colors.foreground,
-            }}
+            className="text-foreground"
+            style={{ fontFamily: "Outfit_800ExtraBold", fontSize: 24, letterSpacing: -0.5 }}
             multiline
           />
 
@@ -366,79 +288,34 @@ export default function NoteEditorScreen() {
             placeholderTextColor={colors.tertiary}
             multiline
             textAlignVertical="top"
+            className="text-foreground min-h-[300px]"
             style={{
               fontFamily: "Inter_400Regular",
               fontSize: FONT_SIZE_MAP[fontSize],
               lineHeight: FONT_SIZE_MAP[fontSize] * 1.7,
-              color: colors.foreground,
-              minHeight: 300,
             }}
           />
         </ScrollView>
 
         {/* Formatting Toolbar */}
         <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 18,
-            backgroundColor: colors.card,
-            borderTopWidth: 1,
-            borderTopColor: colors.borderSubtle,
-            paddingHorizontal: 20,
-            paddingTop: 10,
-            paddingBottom: 10 + insets.bottom,
-          }}
+          className="flex-row items-center gap-[18px] bg-card border-t border-border-subtle px-5"
+          style={{ paddingTop: 10, paddingBottom: 10 + insets.bottom }}
         >
           <Pressable onPress={() => insertFormatting("**", "**")}>
-            <Text
-              style={{
-                fontFamily: "Outfit_800ExtraBold",
-                fontSize: 17,
-                color: colors.foreground,
-              }}
-            >
-              B
-            </Text>
+            <Text className="text-foreground" style={{ fontFamily: "Outfit_800ExtraBold", fontSize: 17 }}>B</Text>
           </Pressable>
           <Pressable onPress={() => insertFormatting("*", "*")}>
-            <Text
-              style={{
-                fontFamily: "Inter_400Regular",
-                fontSize: 17,
-                fontStyle: "italic",
-                color: colors.mutedForeground,
-              }}
-            >
-              I
-            </Text>
+            <Text className="text-muted-foreground" style={{ fontFamily: "Inter_400Regular", fontSize: 17, fontStyle: "italic" }}>I</Text>
           </Pressable>
           <Pressable onPress={() => insertFormatting("__", "__")}>
-            <Text
-              style={{
-                fontFamily: "Inter_500Medium",
-                fontSize: 17,
-                textDecorationLine: "underline",
-                color: colors.mutedForeground,
-              }}
-            >
-              U
-            </Text>
+            <Text className="text-muted-foreground" style={{ fontFamily: "Inter_500Medium", fontSize: 17, textDecorationLine: "underline" }}>U</Text>
           </Pressable>
           <Pressable onPress={() => insertFormatting("~~", "~~")}>
-            <Text
-              style={{
-                fontFamily: "Inter_500Medium",
-                fontSize: 17,
-                textDecorationLine: "line-through",
-                color: colors.mutedForeground,
-              }}
-            >
-              S
-            </Text>
+            <Text className="text-muted-foreground" style={{ fontFamily: "Inter_500Medium", fontSize: 17, textDecorationLine: "line-through" }}>S</Text>
           </Pressable>
 
-          <View style={{ width: 1, height: 20, backgroundColor: colors.borderSubtle }} />
+          <View className="w-px h-5 bg-border-subtle" />
 
           <Pressable onPress={() => insertPrefix("- ")}>
             <List size={19} color={colors.mutedForeground} />
@@ -450,7 +327,7 @@ export default function NoteEditorScreen() {
             <SquareCheck size={19} color={colors.mutedForeground} />
           </Pressable>
 
-          <View style={{ width: 1, height: 20, backgroundColor: colors.borderSubtle }} />
+          <View className="w-px h-5 bg-border-subtle" />
 
           <Pressable onPress={() => insertFormatting("[", "](url)")}>
             <Link size={19} color={colors.mutedForeground} />
@@ -461,7 +338,6 @@ export default function NoteEditorScreen() {
         </View>
       </KeyboardAvoidingView>
 
-      {/* Folder Picker Sheet */}
       {folders && (
         <FolderPickerSheet
           visible={showFolderPicker}

@@ -15,10 +15,11 @@ import {
   Sun,
   Trash2,
 } from "lucide-react-native";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 const ACCENT_COLORS = [
-  null, // default — warm gold
+  null,
   "#6366F1",
   "#EC4899",
   "#F97316",
@@ -43,29 +44,18 @@ function ThemeCard({
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => ({
-        flex: 1,
-        alignItems: "center",
-        gap: 8,
-        opacity: pressed ? 0.7 : 1,
-      })}
+      className="flex-1 items-center gap-2"
+      style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
     >
       <View
+        className="items-center justify-center rounded-[20px] w-full aspect-square"
         style={{
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: 20,
-          width: "100%",
-          aspectRatio: 1,
           backgroundColor: isActive ? colors.accentSurface : colors.card,
           borderWidth: isActive ? 2 : 1,
           borderColor: isActive ? colors.accent : colors.borderSubtle,
         }}
       >
-        <IconComp
-          size={26}
-          color={isActive ? colors.accent : colors.tertiary}
-        />
+        <IconComp size={26} color={isActive ? colors.accent : colors.tertiary} />
       </View>
       <Text
         style={{
@@ -101,45 +91,23 @@ function SettingsRow({
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => ({
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 14,
-        opacity: pressed ? 0.7 : 1,
-      })}
+      className="flex-row items-center gap-3 px-4 py-3.5"
+      style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
     >
       <View
-        style={{
-          width: 32,
-          height: 32,
-          borderRadius: 8,
-          backgroundColor: destructive ? colors.destructive + "15" : colors.muted,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        className="w-8 h-8 rounded-lg items-center justify-center"
+        style={{ backgroundColor: destructive ? colors.destructive + "15" : colors.muted }}
       >
         <IconComp size={16} color={iconColor} />
       </View>
       <Text
-        style={{
-          fontFamily: "Inter_500Medium",
-          fontSize: 15,
-          color: labelColor,
-          flex: 1,
-        }}
+        className="flex-1"
+        style={{ fontFamily: "Inter_500Medium", fontSize: 15, color: labelColor }}
       >
         {label}
       </Text>
       {value && (
-        <Text
-          style={{
-            fontFamily: "Inter_400Regular",
-            fontSize: 13,
-            color: colors.tertiary,
-          }}
-        >
+        <Text className="text-tertiary" style={{ fontFamily: "Inter_400Regular", fontSize: 13 }}>
           {value}
         </Text>
       )}
@@ -177,125 +145,98 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View className="flex-1 bg-background">
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 32, paddingHorizontal: 24, paddingTop: 16, paddingBottom: 100 }}
       >
         {/* Header */}
         <Text
-          style={{
-            fontFamily: "Outfit_800ExtraBold",
-            fontSize: 26,
-            letterSpacing: -0.5,
-            color: colors.foreground,
-          }}
+          className="text-foreground"
+          style={{ fontFamily: "Outfit_800ExtraBold", fontSize: 26, letterSpacing: -0.5 }}
         >
           Settings
         </Text>
 
-        {/* Appearance Section */}
-        <View style={{ gap: 16 }}>
+        {/* Appearance */}
+        <View className="gap-4">
           <Text
-            style={{
-              fontFamily: "Outfit_700Bold",
-              fontSize: 18,
-              letterSpacing: -0.3,
-              color: colors.foreground,
-            }}
+            className="text-foreground"
+            style={{ fontFamily: "Outfit_700Bold", fontSize: 18, letterSpacing: -0.3 }}
           >
             Appearance
           </Text>
-          <View style={{ flexDirection: "row", gap: 12 }}>
-            <ThemeCard
-              label="Light"
-              icon={Sun}
-              isActive={theme === "light"}
-              onPress={() => setTheme("light")}
-              colors={colors}
-            />
-            <ThemeCard
-              label="Dark"
-              icon={Moon}
-              isActive={theme === "dark"}
-              onPress={() => setTheme("dark")}
-              colors={colors}
-            />
-            <ThemeCard
-              label="System"
-              icon={Monitor}
-              isActive={theme === "system"}
-              onPress={() => setTheme("system")}
-              colors={colors}
-            />
+          <View className="flex-row gap-3">
+            <ThemeCard label="Light" icon={Sun} isActive={theme === "light"} onPress={() => setTheme("light")} colors={colors} />
+            <ThemeCard label="Dark" icon={Moon} isActive={theme === "dark"} onPress={() => setTheme("dark")} colors={colors} />
+            <ThemeCard label="System" icon={Monitor} isActive={theme === "system"} onPress={() => setTheme("system")} colors={colors} />
           </View>
         </View>
 
-        {/* Accent Color Section */}
-        <View style={{ gap: 16 }}>
+        {/* Accent Color */}
+        <View className="gap-4">
           <Text
-            style={{
-              fontFamily: "Outfit_700Bold",
-              fontSize: 18,
-              letterSpacing: -0.3,
-              color: colors.foreground,
-            }}
+            className="text-foreground"
+            style={{ fontFamily: "Outfit_700Bold", fontSize: 18, letterSpacing: -0.3 }}
           >
             Accent Color
           </Text>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            {ACCENT_COLORS.map((color) => {
-              const displayColor = color ?? defaultAccent;
-              const isSelected = accentColor === color;
-              return (
-                <Pressable
-                  key={color ?? "default"}
-                  onPress={() => setAccentColor(color)}
-                  style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: 14,
-                    backgroundColor: displayColor,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderWidth: isSelected ? 2 : 0,
-                    borderColor: "#FFFFFF",
-                    shadowColor: displayColor,
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: isSelected ? 0.4 : 0,
-                    shadowRadius: 8,
-                  }}
-                >
-                  {isSelected && (
-                    <Check size={18} color="#FFFFFF" strokeWidth={3} />
-                  )}
-                </Pressable>
-              );
-            })}
+          <View style={{ marginHorizontal: -24 }}>
+            <FlatList
+              data={ACCENT_COLORS as readonly (string | null)[]}
+              keyExtractor={(item) => item ?? "default"}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              decelerationRate="fast"
+              contentContainerStyle={{ paddingHorizontal: 24, gap: 10 }}
+              renderItem={({ item: color }) => {
+                const displayColor = color ?? defaultAccent;
+                const isSelected = accentColor === color;
+                return (
+                  <Pressable
+                    onPress={() => setAccentColor(color)}
+                    className="w-[42px] h-[42px] rounded-[14px] items-center justify-center"
+                    style={{
+                      backgroundColor: displayColor,
+                      borderWidth: isSelected ? 2 : 0,
+                      borderColor: "#FFFFFF",
+                      shadowColor: displayColor,
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: isSelected ? 0.4 : 0,
+                      shadowRadius: 8,
+                    }}
+                  >
+                    {isSelected && <Check size={18} color="#FFFFFF" strokeWidth={3} />}
+                  </Pressable>
+                );
+              }}
+            />
+            <LinearGradient
+              colors={[colors.background, colors.background + "00"]}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 32 }}
+              pointerEvents="none"
+            />
+            <LinearGradient
+              colors={[colors.background + "00", colors.background]}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 32 }}
+              pointerEvents="none"
+            />
           </View>
         </View>
 
-        {/* General Section */}
-        <View style={{ gap: 16 }}>
+        {/* General */}
+        <View className="gap-4">
           <Text
-            style={{
-              fontFamily: "Outfit_700Bold",
-              fontSize: 18,
-              letterSpacing: -0.3,
-              color: colors.foreground,
-            }}
+            className="text-foreground"
+            style={{ fontFamily: "Outfit_700Bold", fontSize: 18, letterSpacing: -0.3 }}
           >
             General
           </Text>
-          <View
-            style={{
-              overflow: "hidden",
-              borderRadius: 20,
-              backgroundColor: colors.card,
-              borderWidth: 1,
-              borderColor: colors.borderSubtle,
-            }}
-          >
+          <View className="overflow-hidden rounded-[20px] bg-card border border-border-subtle">
             <SettingsRow
               icon={Smartphone}
               label="Default Font Size"
@@ -310,72 +251,34 @@ export default function SettingsScreen() {
               }}
               colors={colors}
             />
-            <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }} />
-            <SettingsRow
-              icon={Shield}
-              label="Privacy & Security"
-              onPress={() => {}}
-              colors={colors}
-            />
-            <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }} />
-            <SettingsRow
-              icon={HelpCircle}
-              label="Help & Support"
-              onPress={() => {}}
-              colors={colors}
-            />
+            <View className="h-px bg-border-subtle mx-4" />
+            <SettingsRow icon={Shield} label="Privacy & Security" onPress={() => {}} colors={colors} />
+            <View className="h-px bg-border-subtle mx-4" />
+            <SettingsRow icon={HelpCircle} label="Help & Support" onPress={() => {}} colors={colors} />
           </View>
         </View>
 
-        {/* Account Section */}
-        <View style={{ gap: 16 }}>
+        {/* Account */}
+        <View className="gap-4">
           <Text
-            style={{
-              fontFamily: "Outfit_700Bold",
-              fontSize: 18,
-              letterSpacing: -0.3,
-              color: colors.foreground,
-            }}
+            className="text-foreground"
+            style={{ fontFamily: "Outfit_700Bold", fontSize: 18, letterSpacing: -0.3 }}
           >
             Account
           </Text>
-          <View
-            style={{
-              overflow: "hidden",
-              borderRadius: 20,
-              backgroundColor: colors.card,
-              borderWidth: 1,
-              borderColor: colors.borderSubtle,
-            }}
-          >
-            <SettingsRow
-              icon={Info}
-              label="Email"
-              value={email ?? ""}
-              colors={colors}
-            />
-            <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }} />
-            <SettingsRow
-              icon={Trash2}
-              label="Delete Account"
-              onPress={() => {}}
-              colors={colors}
-              destructive
-            />
+          <View className="overflow-hidden rounded-[20px] bg-card border border-border-subtle">
+            <SettingsRow icon={Info} label="Email" value={email ?? ""} colors={colors} />
+            <View className="h-px bg-border-subtle mx-4" />
+            <SettingsRow icon={Trash2} label="Delete Account" onPress={() => {}} colors={colors} destructive />
           </View>
         </View>
 
         {/* Sign Out */}
         <Pressable
           onPress={handleSignOut}
+          className="flex-row items-center justify-center gap-2 rounded-2xl h-[52px]"
           style={({ pressed }) => ({
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            borderRadius: 16,
             backgroundColor: colors.destructive + "12",
-            height: 52,
             opacity: pressed ? 0.7 : 1,
           })}
         >
@@ -387,12 +290,8 @@ export default function SettingsScreen() {
 
         {/* Version */}
         <Text
-          style={{
-            fontFamily: "Inter_400Regular",
-            fontSize: 12,
-            textAlign: "center",
-            color: colors.tertiary,
-          }}
+          className="text-tertiary text-center"
+          style={{ fontFamily: "Inter_400Regular", fontSize: 12 }}
         >
           Jotpad v1.0.0
         </Text>

@@ -1,4 +1,3 @@
-import { useColors } from "@/lib/theme";
 import { Text, View } from "react-native";
 
 interface StatCardProps {
@@ -7,38 +6,17 @@ interface StatCardProps {
 }
 
 export function StatCard({ value, label }: StatCardProps) {
-  const colors = useColors();
-
   return (
-    <View
-      style={{
-        flex: 1,
-        gap: 4,
-        borderRadius: 20,
-        backgroundColor: colors.card,
-        borderWidth: 1,
-        borderColor: colors.borderSubtle,
-        padding: 16,
-      }}
-    >
+    <View className="flex-1 gap-1 rounded-[20px] bg-card border border-border-subtle p-4">
       <Text
-        style={{
-          fontFamily: "Outfit_900Black",
-          fontSize: 36,
-          letterSpacing: -1.5,
-          color: colors.foreground,
-        }}
+        className="text-foreground"
+        style={{ fontFamily: "Outfit_900Black", fontSize: 36, letterSpacing: -1.5 }}
       >
         {value}
       </Text>
       <Text
-        style={{
-          fontFamily: "Inter_500Medium",
-          fontSize: 11,
-          letterSpacing: 0.5,
-          color: colors.mutedForeground,
-          textTransform: "uppercase",
-        }}
+        className="text-muted-foreground uppercase"
+        style={{ fontFamily: "Inter_500Medium", fontSize: 11, letterSpacing: 0.5 }}
       >
         {label}
       </Text>

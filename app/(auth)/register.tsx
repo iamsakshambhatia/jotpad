@@ -66,27 +66,23 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View className="flex-1 bg-background">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+        className="flex-1"
       >
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 60, paddingBottom: 32, gap: 40 }}>
+          <View className="flex-1 px-6 pt-[60px] pb-8 gap-10">
             {/* Brand */}
-            <View style={{ alignItems: "center", gap: 12 }}>
+            <View className="items-center gap-3">
               <View
+                className="w-[72px] h-[72px] rounded-[20px] items-center justify-center"
                 style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 20,
                   backgroundColor: colors.accent,
-                  alignItems: "center",
-                  justifyContent: "center",
                   shadowColor: colors.accent,
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
@@ -96,53 +92,30 @@ export default function RegisterScreen() {
                 <NotebookPen size={36} color="#FFFFFF" />
               </View>
               <Text
-                style={{
-                  fontFamily: "Outfit_900Black",
-                  fontSize: 36,
-                  letterSpacing: -1,
-                  color: colors.foreground,
-                  marginTop: 8,
-                }}
+                className="text-foreground mt-2"
+                style={{ fontFamily: "Outfit_900Black", fontSize: 36, letterSpacing: -1 }}
               >
                 Jotpad
               </Text>
               <Text
-                style={{
-                  fontFamily: "Inter_400Regular",
-                  fontSize: 15,
-                  color: colors.mutedForeground,
-                }}
+                className="text-muted-foreground"
+                style={{ fontFamily: "Inter_400Regular", fontSize: 15 }}
               >
                 Create your account
               </Text>
             </View>
 
             {/* Form */}
-            <View style={{ gap: 16 }}>
-              {/* Email Field */}
-              <View style={{ gap: 8 }}>
+            <View className="gap-4">
+              {/* Email */}
+              <View className="gap-2">
                 <Text
-                  style={{
-                    fontFamily: "Outfit_600SemiBold",
-                    fontSize: 13,
-                    color: colors.foreground,
-                  }}
+                  className="text-foreground"
+                  style={{ fontFamily: "Outfit_600SemiBold", fontSize: 13 }}
                 >
                   Email
                 </Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 10,
-                    height: 52,
-                    borderRadius: 16,
-                    backgroundColor: colors.input,
-                    borderWidth: 1,
-                    borderColor: colors.borderSubtle,
-                    paddingHorizontal: 16,
-                  }}
-                >
+                <View className="flex-row items-center gap-2.5 h-[52px] rounded-2xl bg-input border border-border-subtle px-4">
                   <Mail size={18} color={colors.tertiary} />
                   <TextInput
                     value={email}
@@ -152,40 +125,21 @@ export default function RegisterScreen() {
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
-                    style={{
-                      flex: 1,
-                      fontFamily: "Inter_400Regular",
-                      fontSize: 14,
-                      color: colors.foreground,
-                    }}
+                    className="flex-1 text-foreground"
+                    style={{ fontFamily: "Inter_400Regular", fontSize: 14 }}
                   />
                 </View>
               </View>
 
-              {/* Password Field */}
-              <View style={{ gap: 8 }}>
+              {/* Password */}
+              <View className="gap-2">
                 <Text
-                  style={{
-                    fontFamily: "Outfit_600SemiBold",
-                    fontSize: 13,
-                    color: colors.foreground,
-                  }}
+                  className="text-foreground"
+                  style={{ fontFamily: "Outfit_600SemiBold", fontSize: 13 }}
                 >
                   Password
                 </Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 10,
-                    height: 52,
-                    borderRadius: 16,
-                    backgroundColor: colors.input,
-                    borderWidth: 1,
-                    borderColor: colors.borderSubtle,
-                    paddingHorizontal: 16,
-                  }}
-                >
+                <View className="flex-row items-center gap-2.5 h-[52px] rounded-2xl bg-input border border-border-subtle px-4">
                   <Lock size={18} color={colors.tertiary} />
                   <TextInput
                     value={password}
@@ -195,12 +149,8 @@ export default function RegisterScreen() {
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
                     onSubmitEditing={handleRegister}
-                    style={{
-                      flex: 1,
-                      fontFamily: "Inter_400Regular",
-                      fontSize: 14,
-                      color: colors.foreground,
-                    }}
+                    className="flex-1 text-foreground"
+                    style={{ fontFamily: "Inter_400Regular", fontSize: 14 }}
                   />
                   <Pressable onPress={() => setShowPassword(!showPassword)}>
                     {showPassword ? <Eye size={18} color={colors.tertiary} /> : <EyeOff size={18} color={colors.tertiary} />}
@@ -213,12 +163,9 @@ export default function RegisterScreen() {
             <Pressable
               onPress={handleRegister}
               disabled={register.isPending || login.isPending}
+              className="h-[54px] rounded-2xl items-center justify-center"
               style={({ pressed }) => ({
-                height: 54,
-                borderRadius: 16,
                 backgroundColor: colors.accent,
-                alignItems: "center",
-                justifyContent: "center",
                 opacity: pressed ? 0.85 : 1,
                 shadowColor: colors.accent,
                 shadowOffset: { width: 0, height: 4 },
@@ -229,40 +176,24 @@ export default function RegisterScreen() {
               {register.isPending || login.isPending ? (
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text
-                  style={{
-                    fontFamily: "Outfit_700Bold",
-                    fontSize: 16,
-                    color: "#FFFFFF",
-                  }}
-                >
+                <Text style={{ fontFamily: "Outfit_700Bold", fontSize: 16, color: "#FFFFFF" }}>
                   Sign Up
                 </Text>
               )}
             </Pressable>
 
-            {/* Bottom Spacer */}
-            <View style={{ flex: 1 }} />
+            <View className="flex-1" />
 
             {/* Sign In Row */}
-            <View style={{ flexDirection: "row", justifyContent: "center", gap: 4 }}>
+            <View className="flex-row justify-center gap-1">
               <Text
-                style={{
-                  fontFamily: "Inter_400Regular",
-                  fontSize: 14,
-                  color: colors.mutedForeground,
-                }}
+                className="text-muted-foreground"
+                style={{ fontFamily: "Inter_400Regular", fontSize: 14 }}
               >
                 Already have an account?
               </Text>
               <Pressable onPress={() => router.back()}>
-                <Text
-                  style={{
-                    fontFamily: "Outfit_700Bold",
-                    fontSize: 14,
-                    color: colors.accent,
-                  }}
-                >
+                <Text style={{ fontFamily: "Outfit_700Bold", fontSize: 14, color: colors.accent }}>
                   Sign In
                 </Text>
               </Pressable>

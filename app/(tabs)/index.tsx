@@ -70,8 +70,8 @@ export default function HomeScreen() {
   }, [queryClient]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={{ flex: 1 }}>
+    <View className="flex-1 bg-background">
+      <View className="flex-1">
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ gap: 28, paddingBottom: 120 }}
@@ -80,86 +80,50 @@ export default function HomeScreen() {
           }
         >
           {/* Header */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingHorizontal: 24,
-              paddingTop: 12,
-            }}
-          >
-            <View style={{ gap: 2 }}>
+          <View className="flex-row items-center justify-between px-6 pt-3">
+            <View className="gap-0.5">
               <Text
-                style={{
-                  fontFamily: "Inter_500Medium",
-                  fontSize: 13,
-                  color: colors.mutedForeground,
-                }}
+                className="text-muted-foreground"
+                style={{ fontFamily: "Inter_500Medium", fontSize: 13 }}
               >
                 {getGreeting()}
               </Text>
               <Text
-                style={{
-                  fontFamily: "Outfit_900Black",
-                  fontSize: 28,
-                  letterSpacing: -1,
-                  color: colors.foreground,
-                }}
+                className="text-foreground"
+                style={{ fontFamily: "Outfit_900Black", fontSize: 28, letterSpacing: -1 }}
               >
                 Jotpad
               </Text>
             </View>
 
-            <Pressable
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 22,
-                backgroundColor: colors.card,
-                borderWidth: 1,
-                borderColor: colors.borderSubtle,
-                width: 44,
-                height: 44,
-              }}
-            >
+            <Pressable className="items-center justify-center rounded-[22px] bg-card border border-border-subtle w-11 h-11">
               <Bell size={18} color={colors.mutedForeground} />
             </Pressable>
           </View>
 
           {/* Search Bar */}
-          <View style={{ paddingHorizontal: 24 }}>
+          <View className="px-6">
             <SearchBar onPress={() => router.push("/(tabs)/search")} />
           </View>
 
           {/* Stats */}
-          <View style={{ flexDirection: "row", gap: 12, paddingHorizontal: 24 }}>
+          <View className="flex-row gap-3 px-6">
             <StatCard value={allNotes?.length ?? 0} label="Notes" />
             <StatCard value={folders?.length ?? 0} label="Folders" />
             <StatCard value={favNotes?.length ?? 0} label="Favorites" />
           </View>
 
           {/* Recent Notes Section */}
-          <View style={{ gap: 16, paddingHorizontal: 24 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <View className="gap-4 px-6">
+            <View className="flex-row items-center justify-between">
               <Text
-                style={{
-                  fontFamily: "Outfit_700Bold",
-                  fontSize: 18,
-                  letterSpacing: -0.3,
-                  color: colors.foreground,
-                }}
+                className="text-foreground"
+                style={{ fontFamily: "Outfit_700Bold", fontSize: 18, letterSpacing: -0.3 }}
               >
                 Recent Notes
               </Text>
               <Pressable onPress={() => router.push({ pathname: "/(tabs)/search", params: { show_all: "true" } })}>
-                <Text
-                  style={{
-                    fontFamily: "Inter_500Medium",
-                    fontSize: 13,
-                    color: colors.accent,
-                  }}
-                >
+                <Text style={{ fontFamily: "Inter_500Medium", fontSize: 13, color: colors.accent }}>
                   View all
                 </Text>
               </Pressable>
@@ -168,7 +132,7 @@ export default function HomeScreen() {
             {notesLoading ? (
               <ActivityIndicator color={colors.accent} />
             ) : (
-              <View style={{ gap: 12 }}>
+              <View className="gap-3">
                 {recentNotes?.map((note) => (
                   <NoteCard
                     key={note.id}
@@ -181,23 +145,10 @@ export default function HomeScreen() {
                   />
                 ))}
                 {recentNotes?.length === 0 && (
-                  <View
-                    style={{
-                      alignItems: "center",
-                      gap: 8,
-                      paddingVertical: 40,
-                      borderRadius: 20,
-                      backgroundColor: colors.card,
-                      borderWidth: 1,
-                      borderColor: colors.borderSubtle,
-                    }}
-                  >
+                  <View className="items-center gap-2 py-10 rounded-[20px] bg-card border border-border-subtle">
                     <Text
-                      style={{
-                        fontFamily: "Inter_400Regular",
-                        fontSize: 14,
-                        color: colors.mutedForeground,
-                      }}
+                      className="text-muted-foreground"
+                      style={{ fontFamily: "Inter_400Regular", fontSize: 14 }}
                     >
                       No notes yet. Tap + to create one.
                     </Text>
@@ -208,15 +159,11 @@ export default function HomeScreen() {
           </View>
 
           {/* Folders Section */}
-          <View style={{ gap: 16, paddingHorizontal: 24 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <View className="gap-4 px-6">
+            <View className="flex-row items-center justify-between">
               <Text
-                style={{
-                  fontFamily: "Outfit_700Bold",
-                  fontSize: 18,
-                  letterSpacing: -0.3,
-                  color: colors.foreground,
-                }}
+                className="text-foreground"
+                style={{ fontFamily: "Outfit_700Bold", fontSize: 18, letterSpacing: -0.3 }}
               >
                 Folders
               </Text>
@@ -228,18 +175,10 @@ export default function HomeScreen() {
             {foldersLoading ? (
               <ActivityIndicator color={colors.accent} />
             ) : (
-              <View
-                style={{
-                  overflow: "hidden",
-                  borderRadius: 20,
-                  backgroundColor: colors.card,
-                  borderWidth: 1,
-                  borderColor: colors.borderSubtle,
-                }}
-              >
+              <View className="overflow-hidden rounded-[20px] bg-card border border-border-subtle">
                 {folders?.map((folder, index) => (
                   <View key={folder.id}>
-                    {index > 0 && <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }} />}
+                    {index > 0 && <View className="h-px bg-border-subtle mx-4" />}
                     <FolderItem
                       name={folder.name}
                       count={allNotes?.filter((n) => n.folder_id === folder.id).length ?? 0}
@@ -254,13 +193,10 @@ export default function HomeScreen() {
                   </View>
                 ))}
                 {folders?.length === 0 && (
-                  <View style={{ alignItems: "center", gap: 8, paddingVertical: 32 }}>
+                  <View className="items-center gap-2 py-8">
                     <Text
-                      style={{
-                        fontFamily: "Inter_400Regular",
-                        fontSize: 14,
-                        color: colors.mutedForeground,
-                      }}
+                      className="text-muted-foreground"
+                      style={{ fontFamily: "Inter_400Regular", fontSize: 14 }}
                     >
                       No folders yet
                     </Text>
