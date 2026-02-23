@@ -1,5 +1,7 @@
 import { createMutation, createQuery } from "react-query-kit";
-import { axiosInstance } from "./axios";
+import { noteRepository } from "../db/note-repository";
+import { syncEngine } from "../sync/sync-engine";
+import { uuid } from "../utils";
 import type {
   CreateNoteRequest,
   Note,
@@ -11,52 +13,49 @@ import type {
 export const useNotes = createQuery({
   queryKey: ["notes"],
   fetcher: async (variables: NotesQueryParams): Promise<NotePreview[]> => {
-    const { data } = await axiosInstance.get<{ notes: NotePreview[] }>("/api/v1/notes/", {
-      params: variables,
-    });
-    return data.notes;
+    return noteRepository.getAll(variables);
   },
 });
 
 export const useRecentNotes = createQuery({
   queryKey: ["notes", "recent"],
   fetcher: async (): Promise<NotePreview[]> => {
-    const { data } = await axiosInstance.get<{ recent_notes: NotePreview[] }>(
-      "/api/v1/notes/recent"
-    );
-    return data.recent_notes;
+    return noteRepository.getRecent();
   },
 });
 
 export const useNote = createQuery({
   queryKey: ["notes", "detail"],
   fetcher: async (variables: { id: string }): Promise<Note> => {
-    const { data } = await axiosInstance.get<{ note: Note }>(`/api/v1/notes/${variables.id}`);
-    return data.note;
+    const note = await noteRepository.getById(variables.id);
+    if (!note) throw new Error("Note not found");
+    return note;
   },
 });
 
 export const useCreateNote = createMutation({
   mutationFn: async (variables: CreateNoteRequest) => {
-    const { data } = await axiosInstance.post("/api/v1/notes/", variables);
-    return data;
+    const id = uuid();
+    const note = await noteRepository.create(id, variables);
+    syncEngine.triggerSync();
+    return { note };
   },
 });
 
 export const useUpdateNote = createMutation({
   mutationFn: async (variables: UpdateNoteRequest & { id: string }) => {
     const { id, ...body } = variables;
-    const { data } = await axiosInstance.patch<{ detail: string; note: Note }>(
-      `/api/v1/notes/${id}`,
-      body
-    );
-    return data;
+    await noteRepository.update(id, body);
+    syncEngine.triggerSync();
+    const note = await noteRepository.getById(id);
+    return { detail: "Note updated", note };
   },
 });
 
 export const useRestoreNote = createMutation({
   mutationFn: async (variables: { id: string }) => {
-    const { data } = await axiosInstance.post(`/api/v1/notes/${variables.id}/restore`);
-    return data;
+    await noteRepository.update(variables.id, { is_archive: false });
+    syncEngine.triggerSync();
+    return { detail: "Note restored" };
   },
 });

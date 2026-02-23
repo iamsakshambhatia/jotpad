@@ -25,18 +25,24 @@ import {
   Outfit_800ExtraBold,
   Outfit_900Black,
 } from "@expo-google-fonts/outfit";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { AppState } from "react-native";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { useFonts } from "expo-font";
 import { ThemeProvider } from "@react-navigation/native";
+import { getDatabase } from "@/lib/db/database";
+import { useNetworkStore } from "@/lib/store/network-store";
+import { useAuthStore } from "@/lib/store/auth-store";
+import { syncEngine } from "@/lib/sync/sync-engine";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: true,
+      staleTime: Infinity,
+      refetchOnWindowFocus: false,
       retry: false,
     },
   },
@@ -47,6 +53,10 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const resolvedTheme = useResolvedTheme();
   const colors = THEME[resolvedTheme];
+  const [dbReady, setDbReady] = useState(false);
+  const appState = useRef(AppState.currentState);
+  const token = useAuthStore((s) => s.token);
+
   const [fontsLoaded, fontError] = useFonts({
     Inter_100Thin,
     Inter_200ExtraLight,
@@ -66,13 +76,56 @@ export default function RootLayout() {
     Outfit_900Black,
   });
 
+  // Initialize database
   useEffect(() => {
-    if (fontsLoaded || fontError) {
+    getDatabase()
+      .then(() => setDbReady(true))
+      .catch((err) => {
+        console.error("Failed to init database:", err);
+        setDbReady(true); // Continue even on failure
+      });
+  }, []);
+
+  // Initialize sync engine and network listener
+  useEffect(() => {
+    syncEngine.init(queryClient);
+    useNetworkStore.getState().initNetworkListener(() => {
+      syncEngine.triggerSync();
+    });
+
+    return () => {
+      useNetworkStore.getState().stopNetworkListener();
+    };
+  }, []);
+
+  // Foreground sync
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (appState.current.match(/inactive|background/) && nextAppState === "active" && token) {
+        syncEngine.triggerSync();
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => subscription.remove();
+  }, [token]);
+
+  // Full sync on login / app launch with token
+  useEffect(() => {
+    if (token && dbReady) {
+      syncEngine.performFullSync();
+      syncEngine.startPeriodicSync();
+    }
+  }, [token, dbReady]);
+
+  useEffect(() => {
+    if ((fontsLoaded || fontError) && dbReady) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, fontError]);
+  }, [fontsLoaded, fontError, dbReady]);
 
   if (!fontsLoaded && !fontError) return null;
+  if (!dbReady) return null;
 
   return (
     <ErrorBoundary>
