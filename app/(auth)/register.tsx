@@ -76,16 +76,32 @@ export default function RegisterScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 40, paddingBottom: 32, gap: 32 }}>
+          <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 60, paddingBottom: 32, gap: 40 }}>
             {/* Brand */}
-            <View style={{ alignItems: "center", gap: 8 }}>
-              <NotebookPen size={48} color={colors.foreground} />
+            <View style={{ alignItems: "center", gap: 12 }}>
+              <View
+                style={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 20,
+                  backgroundColor: colors.accent,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  shadowColor: colors.accent,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 12,
+                }}
+              >
+                <NotebookPen size={36} color="#FFFFFF" />
+              </View>
               <Text
                 style={{
                   fontFamily: "Outfit_900Black",
-                  fontSize: 40,
+                  fontSize: 36,
                   letterSpacing: -1,
                   color: colors.foreground,
+                  marginTop: 8,
                 }}
               >
                 Jotpad
@@ -119,9 +135,11 @@ export default function RegisterScreen() {
                     flexDirection: "row",
                     alignItems: "center",
                     gap: 10,
-                    height: 48,
-                    borderRadius: 12,
-                    backgroundColor: colors.card,
+                    height: 52,
+                    borderRadius: 16,
+                    backgroundColor: colors.input,
+                    borderWidth: 1,
+                    borderColor: colors.borderSubtle,
                     paddingHorizontal: 16,
                   }}
                 >
@@ -160,9 +178,11 @@ export default function RegisterScreen() {
                     flexDirection: "row",
                     alignItems: "center",
                     gap: 10,
-                    height: 48,
-                    borderRadius: 12,
-                    backgroundColor: colors.card,
+                    height: 52,
+                    borderRadius: 16,
+                    backgroundColor: colors.input,
+                    borderWidth: 1,
+                    borderColor: colors.borderSubtle,
                     paddingHorizontal: 16,
                   }}
                 >
@@ -194,22 +214,26 @@ export default function RegisterScreen() {
               onPress={handleRegister}
               disabled={register.isPending || login.isPending}
               style={({ pressed }) => ({
-                height: 52,
-                borderRadius: 14,
+                height: 54,
+                borderRadius: 16,
                 backgroundColor: colors.accent,
                 alignItems: "center",
                 justifyContent: "center",
                 opacity: pressed ? 0.85 : 1,
+                shadowColor: colors.accent,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 12,
               })}
             >
               {register.isPending || login.isPending ? (
-                <ActivityIndicator color={colors.accentForeground} />
+                <ActivityIndicator color="#FFFFFF" />
               ) : (
                 <Text
                   style={{
                     fontFamily: "Outfit_700Bold",
                     fontSize: 16,
-                    color: colors.accentForeground,
+                    color: "#FFFFFF",
                   }}
                 >
                   Sign Up
@@ -236,7 +260,7 @@ export default function RegisterScreen() {
                   style={{
                     fontFamily: "Outfit_700Bold",
                     fontSize: 14,
-                    color: colors.foreground,
+                    color: colors.accent,
                   }}
                 >
                   Sign In

@@ -2,6 +2,7 @@ import { useNote, useCreateNote, useUpdateNote } from "@/lib/api/notes";
 import { useFolders } from "@/lib/api/folders";
 import { useColors } from "@/lib/theme";
 import { useThemeStore } from "@/lib/store/theme-store";
+import { FolderPickerSheet } from "@/components/FolderPickerSheet";
 import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
@@ -120,6 +121,7 @@ export default function NoteEditorScreen() {
 
   const changeFolder = (folderId: string) => {
     setSelectedFolderId(folderId);
+    setShowFolderPicker(false);
     if (!isNew && note) {
       updateNote.mutate(
         { id: note.id, folder_id: folderId },
@@ -127,7 +129,6 @@ export default function NoteEditorScreen() {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["notes"] });
             queryClient.invalidateQueries({ queryKey: ["folders"] });
-            setShowFolderPicker(false);
           },
         }
       );
@@ -192,12 +193,27 @@ export default function NoteEditorScreen() {
     );
   }
 
+  const selectedFolderName = folders?.find((f) => f.id === selectedFolderId)?.name ?? note?.folder?.name ?? "Uncategorized";
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
+        {/* Drag Handle */}
+        <View style={{ alignItems: "center", paddingTop: 10, paddingBottom: 4 }}>
+          <View
+            style={{
+              width: 36,
+              height: 5,
+              borderRadius: 3,
+              backgroundColor: colors.tertiary,
+              opacity: 0.4,
+            }}
+          />
+        </View>
+
         {/* Nav Bar */}
         <View
           style={{
@@ -234,13 +250,19 @@ export default function NoteEditorScreen() {
               <Pressable
                 onPress={handleSaveNew}
                 disabled={createNote.isPending}
-                style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1 })}
+                style={({ pressed }) => ({
+                  backgroundColor: colors.accent,
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 20,
+                  opacity: pressed ? 0.8 : 1,
+                })}
               >
                 <Text
                   style={{
                     fontFamily: "Outfit_700Bold",
-                    fontSize: 15,
-                    color: colors.accent,
+                    fontSize: 14,
+                    color: "#FFFFFF",
                   }}
                 >
                   {createNote.isPending ? "Saving..." : "Save"}
@@ -251,62 +273,73 @@ export default function NoteEditorScreen() {
                 <Pressable onPress={toggleFavorite}>
                   <Heart
                     size={22}
-                    color={isFavorite ? "#EF4444" : colors.mutedForeground}
-                    fill={isFavorite ? "#EF4444" : "none"}
+                    color={isFavorite ? colors.destructive : colors.mutedForeground}
+                    fill={isFavorite ? colors.destructive : "none"}
                   />
                 </Pressable>
                 <Pressable>
-                  <EllipsisVertical size={22} color={colors.foreground} />
+                  <EllipsisVertical size={22} color={colors.mutedForeground} />
                 </Pressable>
               </>
             )}
           </View>
         </View>
 
-        {/* Folder Picker */}
-        {(isNew || showFolderPicker) && folders && folders.length > 0 && (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ flexGrow: 0 }}
-            contentContainerStyle={{ gap: 8, paddingHorizontal: 24, paddingVertical: 8 }}
+        {/* Meta Info Row */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 16,
+            paddingHorizontal: 24,
+            paddingVertical: 8,
+          }}
+        >
+          {!isNew && note && (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+              <Calendar size={13} color={colors.tertiary} />
+              <Text
+                style={{
+                  fontFamily: "Inter_500Medium",
+                  fontSize: 12,
+                  color: colors.tertiary,
+                }}
+              >
+                {format(new Date(note.updated_at), "MMM d, yyyy")}
+              </Text>
+            </View>
+          )}
+          <Pressable
+            onPress={() => setShowFolderPicker(true)}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 6,
+              backgroundColor: colors.accentSurface,
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+              borderRadius: 12,
+            }}
           >
-            {folders.map((folder) => {
-              const isSelected = selectedFolderId === folder.id;
-              return (
-                <Pressable
-                  key={folder.id}
-                  onPress={() => isNew ? setSelectedFolderId(folder.id) : changeFolder(folder.id)}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 6,
-                    paddingHorizontal: 14,
-                    paddingVertical: 8,
-                    borderRadius: 20,
-                    backgroundColor: isSelected ? colors.accent : colors.card,
-                  }}
-                >
-                  <Folder size={14} color={isSelected ? colors.accentForeground : colors.mutedForeground} />
-                  <Text
-                    style={{
-                      fontFamily: isSelected ? "Outfit_600SemiBold" : "Inter_400Regular",
-                      fontSize: 13,
-                      color: isSelected ? colors.accentForeground : colors.foreground,
-                    }}
-                  >
-                    {folder.name}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        )}
+            <Folder size={13} color={colors.accent} />
+            <Text
+              style={{
+                fontFamily: "Inter_500Medium",
+                fontSize: 12,
+                color: colors.accent,
+              }}
+            >
+              {selectedFolderName}
+            </Text>
+          </Pressable>
+        </View>
+
+        <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 24 }} />
 
         {/* Editor Content */}
         <ScrollView
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24, gap: 16 }}
+          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24, paddingTop: 16, gap: 12 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -314,51 +347,15 @@ export default function NoteEditorScreen() {
             value={title}
             onChangeText={handleTitleChange}
             placeholder="Note title"
-            placeholderTextColor={colors.mutedForeground}
+            placeholderTextColor={colors.tertiary}
             style={{
               fontFamily: "Outfit_800ExtraBold",
-              fontSize: 28,
+              fontSize: 24,
               letterSpacing: -0.5,
               color: colors.foreground,
             }}
             multiline
           />
-
-          {/* Meta Info */}
-          {!isNew && note && (
-            <View style={{ flexDirection: "row", gap: 16 }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                <Calendar size={14} color={colors.mutedForeground} />
-                <Text
-                  style={{
-                    fontFamily: "Inter_500Medium",
-                    fontSize: 12,
-                    color: colors.mutedForeground,
-                  }}
-                >
-                  {format(new Date(note.updated_at), "MMM d, yyyy")}
-                </Text>
-              </View>
-              <Pressable
-                onPress={() => setShowFolderPicker(!showFolderPicker)}
-                style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
-              >
-                <Folder size={14} color={colors.mutedForeground} />
-                <Text
-                  style={{
-                    fontFamily: "Inter_500Medium",
-                    fontSize: 12,
-                    color: colors.mutedForeground,
-                    textDecorationLine: "underline",
-                  }}
-                >
-                  {folders?.find((f) => f.id === selectedFolderId)?.name ?? note.folder?.name ?? "Uncategorized"}
-                </Text>
-              </Pressable>
-            </View>
-          )}
-
-          <View style={{ height: 1, backgroundColor: colors.border }} />
 
           <TextInput
             ref={contentRef}
@@ -366,13 +363,13 @@ export default function NoteEditorScreen() {
             onChangeText={handleContentChange}
             onSelectionChange={(e) => setSelection(e.nativeEvent.selection)}
             placeholder="Start writing..."
-            placeholderTextColor={colors.mutedForeground}
+            placeholderTextColor={colors.tertiary}
             multiline
             textAlignVertical="top"
             style={{
               fontFamily: "Inter_400Regular",
               fontSize: FONT_SIZE_MAP[fontSize],
-              lineHeight: FONT_SIZE_MAP[fontSize] * 1.6,
+              lineHeight: FONT_SIZE_MAP[fontSize] * 1.7,
               color: colors.foreground,
               minHeight: 300,
             }}
@@ -384,20 +381,20 @@ export default function NoteEditorScreen() {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            gap: 20,
+            gap: 18,
             backgroundColor: colors.card,
-            paddingHorizontal: 24,
-            paddingTop: 12,
-            paddingBottom: 12 + insets.bottom,
             borderTopWidth: 1,
-            borderTopColor: colors.border,
+            borderTopColor: colors.borderSubtle,
+            paddingHorizontal: 20,
+            paddingTop: 10,
+            paddingBottom: 10 + insets.bottom,
           }}
         >
           <Pressable onPress={() => insertFormatting("**", "**")}>
             <Text
               style={{
                 fontFamily: "Outfit_800ExtraBold",
-                fontSize: 18,
+                fontSize: 17,
                 color: colors.foreground,
               }}
             >
@@ -408,7 +405,7 @@ export default function NoteEditorScreen() {
             <Text
               style={{
                 fontFamily: "Inter_400Regular",
-                fontSize: 18,
+                fontSize: 17,
                 fontStyle: "italic",
                 color: colors.mutedForeground,
               }}
@@ -420,7 +417,7 @@ export default function NoteEditorScreen() {
             <Text
               style={{
                 fontFamily: "Inter_500Medium",
-                fontSize: 18,
+                fontSize: 17,
                 textDecorationLine: "underline",
                 color: colors.mutedForeground,
               }}
@@ -432,7 +429,7 @@ export default function NoteEditorScreen() {
             <Text
               style={{
                 fontFamily: "Inter_500Medium",
-                fontSize: 18,
+                fontSize: 17,
                 textDecorationLine: "line-through",
                 color: colors.mutedForeground,
               }}
@@ -441,28 +438,39 @@ export default function NoteEditorScreen() {
             </Text>
           </Pressable>
 
-          <View style={{ width: 1, height: 20, backgroundColor: colors.border }} />
+          <View style={{ width: 1, height: 20, backgroundColor: colors.borderSubtle }} />
 
           <Pressable onPress={() => insertPrefix("- ")}>
-            <List size={20} color={colors.mutedForeground} />
+            <List size={19} color={colors.mutedForeground} />
           </Pressable>
           <Pressable onPress={() => insertPrefix("1. ")}>
-            <ListOrdered size={20} color={colors.mutedForeground} />
+            <ListOrdered size={19} color={colors.mutedForeground} />
           </Pressable>
           <Pressable onPress={() => insertPrefix("- [ ] ")}>
-            <SquareCheck size={20} color={colors.mutedForeground} />
+            <SquareCheck size={19} color={colors.mutedForeground} />
           </Pressable>
 
-          <View style={{ width: 1, height: 20, backgroundColor: colors.border }} />
+          <View style={{ width: 1, height: 20, backgroundColor: colors.borderSubtle }} />
 
           <Pressable onPress={() => insertFormatting("[", "](url)")}>
-            <Link size={20} color={colors.mutedForeground} />
+            <Link size={19} color={colors.mutedForeground} />
           </Pressable>
           <Pressable onPress={() => insertFormatting("![alt](", ")")}>
-            <Image size={20} color={colors.mutedForeground} />
+            <Image size={19} color={colors.mutedForeground} />
           </Pressable>
         </View>
       </KeyboardAvoidingView>
+
+      {/* Folder Picker Sheet */}
+      {folders && (
+        <FolderPickerSheet
+          visible={showFolderPicker}
+          folders={folders}
+          selectedFolderId={selectedFolderId}
+          onSelect={changeFolder}
+          onClose={() => setShowFolderPicker(false)}
+        />
+      )}
     </View>
   );
 }

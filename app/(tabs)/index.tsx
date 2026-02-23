@@ -74,7 +74,7 @@ export default function HomeScreen() {
       <View style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ gap: 24, paddingBottom: 80 }}
+          contentContainerStyle={{ gap: 28, paddingBottom: 120 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />
           }
@@ -86,7 +86,7 @@ export default function HomeScreen() {
               alignItems: "center",
               justifyContent: "space-between",
               paddingHorizontal: 24,
-              paddingTop: 8,
+              paddingTop: 12,
             }}
           >
             <View style={{ gap: 2 }}>
@@ -102,7 +102,7 @@ export default function HomeScreen() {
               <Text
                 style={{
                   fontFamily: "Outfit_900Black",
-                  fontSize: 32,
+                  fontSize: 28,
                   letterSpacing: -1,
                   color: colors.foreground,
                 }}
@@ -117,11 +117,13 @@ export default function HomeScreen() {
                 justifyContent: "center",
                 borderRadius: 22,
                 backgroundColor: colors.card,
+                borderWidth: 1,
+                borderColor: colors.borderSubtle,
                 width: 44,
                 height: 44,
               }}
             >
-              <Bell size={20} color={colors.foreground} />
+              <Bell size={18} color={colors.mutedForeground} />
             </Pressable>
           </View>
 
@@ -132,7 +134,7 @@ export default function HomeScreen() {
 
           {/* Stats */}
           <View style={{ flexDirection: "row", gap: 12, paddingHorizontal: 24 }}>
-            <StatCard value={allNotes?.length ?? 0} label="Total Notes" />
+            <StatCard value={allNotes?.length ?? 0} label="Notes" />
             <StatCard value={folders?.length ?? 0} label="Folders" />
             <StatCard value={favNotes?.length ?? 0} label="Favorites" />
           </View>
@@ -142,9 +144,9 @@ export default function HomeScreen() {
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
               <Text
                 style={{
-                  fontFamily: "Outfit_800ExtraBold",
-                  fontSize: 20,
-                  letterSpacing: -0.5,
+                  fontFamily: "Outfit_700Bold",
+                  fontSize: 18,
+                  letterSpacing: -0.3,
                   color: colors.foreground,
                 }}
               >
@@ -155,7 +157,7 @@ export default function HomeScreen() {
                   style={{
                     fontFamily: "Inter_500Medium",
                     fontSize: 13,
-                    color: colors.mutedForeground,
+                    color: colors.accent,
                   }}
                 >
                   View all
@@ -174,11 +176,22 @@ export default function HomeScreen() {
                     preview={note.preview}
                     date={format(new Date(note.updated_at), "MMM d, yyyy")}
                     folderName={note.folder?.name ?? "Uncategorized"}
+                    isFavorite={note.is_favorite}
                     onPress={() => router.push(`/note/${note.id}`)}
                   />
                 ))}
                 {recentNotes?.length === 0 && (
-                  <View style={{ alignItems: "center", gap: 8, paddingVertical: 32 }}>
+                  <View
+                    style={{
+                      alignItems: "center",
+                      gap: 8,
+                      paddingVertical: 40,
+                      borderRadius: 20,
+                      backgroundColor: colors.card,
+                      borderWidth: 1,
+                      borderColor: colors.borderSubtle,
+                    }}
+                  >
                     <Text
                       style={{
                         fontFamily: "Inter_400Regular",
@@ -186,7 +199,7 @@ export default function HomeScreen() {
                         color: colors.mutedForeground,
                       }}
                     >
-                      No notes yet
+                      No notes yet. Tap + to create one.
                     </Text>
                   </View>
                 )}
@@ -199,26 +212,34 @@ export default function HomeScreen() {
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
               <Text
                 style={{
-                  fontFamily: "Outfit_800ExtraBold",
-                  fontSize: 20,
-                  letterSpacing: -0.5,
+                  fontFamily: "Outfit_700Bold",
+                  fontSize: 18,
+                  letterSpacing: -0.3,
                   color: colors.foreground,
                 }}
               >
                 Folders
               </Text>
               <Pressable onPress={() => setShowNewFolder(true)}>
-                <Plus size={20} color={colors.mutedForeground} />
+                <Plus size={20} color={colors.accent} />
               </Pressable>
             </View>
 
             {foldersLoading ? (
               <ActivityIndicator color={colors.accent} />
             ) : (
-              <View style={{ overflow: "hidden", borderRadius: 16, backgroundColor: colors.card }}>
+              <View
+                style={{
+                  overflow: "hidden",
+                  borderRadius: 20,
+                  backgroundColor: colors.card,
+                  borderWidth: 1,
+                  borderColor: colors.borderSubtle,
+                }}
+              >
                 {folders?.map((folder, index) => (
                   <View key={folder.id}>
-                    {index > 0 && <View style={{ height: 1, backgroundColor: colors.border }} />}
+                    {index > 0 && <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }} />}
                     <FolderItem
                       name={folder.name}
                       count={allNotes?.filter((n) => n.folder_id === folder.id).length ?? 0}
@@ -233,7 +254,7 @@ export default function HomeScreen() {
                   </View>
                 ))}
                 {folders?.length === 0 && (
-                  <View style={{ alignItems: "center", gap: 8, paddingVertical: 24 }}>
+                  <View style={{ alignItems: "center", gap: 8, paddingVertical: 32 }}>
                     <Text
                       style={{
                         fontFamily: "Inter_400Regular",

@@ -56,23 +56,25 @@ export function SearchBar({ onPress }: SearchBarProps) {
           flexDirection: "row",
           alignItems: "center",
           gap: 12,
-          borderRadius: 24,
-          backgroundColor: colors.card,
-          paddingHorizontal: 16,
-          height: 48,
+          borderRadius: 26,
+          backgroundColor: colors.input,
+          borderWidth: 1,
+          borderColor: colors.borderSubtle,
+          paddingHorizontal: 18,
+          height: 50,
         }}
       >
-        <Search size={18} color={colors.mutedForeground} />
+        <Search size={18} color={colors.tertiary} />
         <Animated.Text
           style={{
             fontFamily: "Inter_400Regular",
             fontSize: 14,
-            color: colors.mutedForeground,
+            color: colors.tertiary,
             opacity,
           }}
         >
           {displayText}
-          <Animated.Text style={{ color: colors.mutedForeground }}>|</Animated.Text>
+          <Animated.Text style={{ color: colors.tertiary }}>|</Animated.Text>
         </Animated.Text>
       </View>
     </Pressable>

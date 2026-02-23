@@ -20,11 +20,22 @@ export function FolderItem({ name, count, icon: FolderIcon, onPress }: FolderIte
         alignItems: "center",
         gap: 12,
         paddingHorizontal: 16,
-        paddingVertical: 12,
+        paddingVertical: 14,
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <FolderIcon size={20} color={colors.mutedForeground} />
+      <View
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: 10,
+          backgroundColor: colors.accentSurface,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <FolderIcon size={18} color={colors.accent} />
+      </View>
 
       <Text
         style={{
@@ -41,13 +52,13 @@ export function FolderItem({ name, count, icon: FolderIcon, onPress }: FolderIte
         style={{
           fontFamily: "Inter_500Medium",
           fontSize: 13,
-          color: colors.mutedForeground,
+          color: colors.tertiary,
         }}
       >
         {count}
       </Text>
 
-      <ChevronRight size={16} color={colors.mutedForeground} />
+      <ChevronRight size={16} color={colors.tertiary} />
     </Pressable>
   );
 }

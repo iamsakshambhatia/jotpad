@@ -18,13 +18,13 @@ import {
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 
 const ACCENT_COLORS = [
-  null, // default — follows theme (black in light, white in dark)
+  null, // default — warm gold
   "#6366F1",
   "#EC4899",
   "#F97316",
   "#10B981",
   "#3B82F6",
-  "#EF4444",
+  "#E5484D",
 ] as const;
 
 function ThemeCard({
@@ -54,24 +54,24 @@ function ThemeCard({
         style={{
           alignItems: "center",
           justifyContent: "center",
-          borderRadius: 16,
+          borderRadius: 20,
           width: "100%",
           aspectRatio: 1,
-          backgroundColor: isActive ? colors.accent : colors.card,
-          borderWidth: isActive ? 2 : 0,
-          borderColor: colors.accent,
+          backgroundColor: isActive ? colors.accentSurface : colors.card,
+          borderWidth: isActive ? 2 : 1,
+          borderColor: isActive ? colors.accent : colors.borderSubtle,
         }}
       >
         <IconComp
-          size={28}
-          color={isActive ? colors.accentForeground : colors.mutedForeground}
+          size={26}
+          color={isActive ? colors.accent : colors.tertiary}
         />
       </View>
       <Text
         style={{
           fontFamily: isActive ? "Outfit_700Bold" : "Inter_500Medium",
           fontSize: 12,
-          color: isActive ? colors.foreground : colors.mutedForeground,
+          color: isActive ? colors.accent : colors.mutedForeground,
         }}
       >
         {label}
@@ -95,8 +95,8 @@ function SettingsRow({
   colors: (typeof THEME)["light"];
   destructive?: boolean;
 }) {
-  const iconColor = destructive ? "#EF4444" : colors.mutedForeground;
-  const labelColor = destructive ? "#EF4444" : colors.foreground;
+  const iconColor = destructive ? colors.destructive : colors.mutedForeground;
+  const labelColor = destructive ? colors.destructive : colors.foreground;
 
   return (
     <Pressable
@@ -110,7 +110,18 @@ function SettingsRow({
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <IconComp size={20} color={iconColor} />
+      <View
+        style={{
+          width: 32,
+          height: 32,
+          borderRadius: 8,
+          backgroundColor: destructive ? colors.destructive + "15" : colors.muted,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <IconComp size={16} color={iconColor} />
+      </View>
       <Text
         style={{
           fontFamily: "Inter_500Medium",
@@ -126,13 +137,13 @@ function SettingsRow({
           style={{
             fontFamily: "Inter_400Regular",
             fontSize: 13,
-            color: colors.mutedForeground,
+            color: colors.tertiary,
           }}
         >
           {value}
         </Text>
       )}
-      {onPress && !destructive && <ChevronRight size={16} color={colors.mutedForeground} />}
+      {onPress && !destructive && <ChevronRight size={16} color={colors.tertiary} />}
     </Pressable>
   );
 }
@@ -169,14 +180,14 @@ export default function SettingsScreen() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 32, paddingHorizontal: 24, paddingTop: 8, paddingBottom: 40 }}
+        contentContainerStyle={{ gap: 32, paddingHorizontal: 24, paddingTop: 16, paddingBottom: 100 }}
       >
         {/* Header */}
         <Text
           style={{
-            fontFamily: "Outfit_900Black",
-            fontSize: 32,
-            letterSpacing: -1,
+            fontFamily: "Outfit_800ExtraBold",
+            fontSize: 26,
+            letterSpacing: -0.5,
             color: colors.foreground,
           }}
         >
@@ -187,9 +198,9 @@ export default function SettingsScreen() {
         <View style={{ gap: 16 }}>
           <Text
             style={{
-              fontFamily: "Outfit_800ExtraBold",
-              fontSize: 20,
-              letterSpacing: -0.5,
+              fontFamily: "Outfit_700Bold",
+              fontSize: 18,
+              letterSpacing: -0.3,
               color: colors.foreground,
             }}
           >
@@ -224,36 +235,39 @@ export default function SettingsScreen() {
         <View style={{ gap: 16 }}>
           <Text
             style={{
-              fontFamily: "Outfit_800ExtraBold",
-              fontSize: 20,
-              letterSpacing: -0.5,
+              fontFamily: "Outfit_700Bold",
+              fontSize: 18,
+              letterSpacing: -0.3,
               color: colors.foreground,
             }}
           >
             Accent Color
           </Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            {ACCENT_COLORS.map((color, index) => {
+            {ACCENT_COLORS.map((color) => {
               const displayColor = color ?? defaultAccent;
               const isSelected = accentColor === color;
-              const checkColor = displayColor === "#FFFFFF" ? "#000000" : "#FFFFFF";
               return (
                 <Pressable
                   key={color ?? "default"}
                   onPress={() => setAccentColor(color)}
                   style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
+                    width: 42,
+                    height: 42,
+                    borderRadius: 14,
                     backgroundColor: displayColor,
                     alignItems: "center",
                     justifyContent: "center",
-                    borderWidth: displayColor === "#FFFFFF" ? 1 : 0,
-                    borderColor: colors.border,
+                    borderWidth: isSelected ? 2 : 0,
+                    borderColor: "#FFFFFF",
+                    shadowColor: displayColor,
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: isSelected ? 0.4 : 0,
+                    shadowRadius: 8,
                   }}
                 >
                   {isSelected && (
-                    <Check size={18} color={checkColor} strokeWidth={3} />
+                    <Check size={18} color="#FFFFFF" strokeWidth={3} />
                   )}
                 </Pressable>
               );
@@ -265,15 +279,23 @@ export default function SettingsScreen() {
         <View style={{ gap: 16 }}>
           <Text
             style={{
-              fontFamily: "Outfit_800ExtraBold",
-              fontSize: 20,
-              letterSpacing: -0.5,
+              fontFamily: "Outfit_700Bold",
+              fontSize: 18,
+              letterSpacing: -0.3,
               color: colors.foreground,
             }}
           >
             General
           </Text>
-          <View style={{ overflow: "hidden", borderRadius: 16, backgroundColor: colors.card }}>
+          <View
+            style={{
+              overflow: "hidden",
+              borderRadius: 20,
+              backgroundColor: colors.card,
+              borderWidth: 1,
+              borderColor: colors.borderSubtle,
+            }}
+          >
             <SettingsRow
               icon={Smartphone}
               label="Default Font Size"
@@ -288,14 +310,14 @@ export default function SettingsScreen() {
               }}
               colors={colors}
             />
-            <View style={{ height: 1, backgroundColor: colors.border }} />
+            <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }} />
             <SettingsRow
               icon={Shield}
               label="Privacy & Security"
               onPress={() => {}}
               colors={colors}
             />
-            <View style={{ height: 1, backgroundColor: colors.border }} />
+            <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }} />
             <SettingsRow
               icon={HelpCircle}
               label="Help & Support"
@@ -309,22 +331,30 @@ export default function SettingsScreen() {
         <View style={{ gap: 16 }}>
           <Text
             style={{
-              fontFamily: "Outfit_800ExtraBold",
-              fontSize: 20,
-              letterSpacing: -0.5,
+              fontFamily: "Outfit_700Bold",
+              fontSize: 18,
+              letterSpacing: -0.3,
               color: colors.foreground,
             }}
           >
             Account
           </Text>
-          <View style={{ overflow: "hidden", borderRadius: 16, backgroundColor: colors.card }}>
+          <View
+            style={{
+              overflow: "hidden",
+              borderRadius: 20,
+              backgroundColor: colors.card,
+              borderWidth: 1,
+              borderColor: colors.borderSubtle,
+            }}
+          >
             <SettingsRow
               icon={Info}
               label="Email"
               value={email ?? ""}
               colors={colors}
             />
-            <View style={{ height: 1, backgroundColor: colors.border }} />
+            <View style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }} />
             <SettingsRow
               icon={Trash2}
               label="Delete Account"
@@ -343,14 +373,14 @@ export default function SettingsScreen() {
             alignItems: "center",
             justifyContent: "center",
             gap: 8,
-            borderRadius: 12,
-            backgroundColor: colors.card,
+            borderRadius: 16,
+            backgroundColor: colors.destructive + "12",
             height: 52,
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <LogOut size={18} color="#EF4444" />
-          <Text style={{ fontFamily: "Outfit_600SemiBold", fontSize: 15, color: "#EF4444" }}>
+          <LogOut size={18} color={colors.destructive} />
+          <Text style={{ fontFamily: "Outfit_600SemiBold", fontSize: 15, color: colors.destructive }}>
             Sign Out
           </Text>
         </Pressable>
@@ -361,7 +391,7 @@ export default function SettingsScreen() {
             fontFamily: "Inter_400Regular",
             fontSize: 12,
             textAlign: "center",
-            color: colors.mutedForeground,
+            color: colors.tertiary,
           }}
         >
           Jotpad v1.0.0

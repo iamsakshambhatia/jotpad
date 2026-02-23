@@ -40,9 +40,9 @@ export default function SearchScreen() {
       <View style={{ flex: 1, gap: 24, paddingHorizontal: 24, paddingTop: 16 }}>
         <Text
           style={{
-            fontFamily: "Outfit_900Black",
-            fontSize: 32,
-            letterSpacing: -1,
+            fontFamily: "Outfit_800ExtraBold",
+            fontSize: 26,
+            letterSpacing: -0.5,
             color: colors.foreground,
           }}
         >
@@ -54,18 +54,20 @@ export default function SearchScreen() {
             flexDirection: "row",
             alignItems: "center",
             gap: 12,
-            borderRadius: 24,
-            backgroundColor: colors.card,
-            paddingHorizontal: 16,
-            height: 48,
+            borderRadius: 26,
+            backgroundColor: colors.input,
+            borderWidth: 1,
+            borderColor: colors.borderSubtle,
+            paddingHorizontal: 18,
+            height: 50,
           }}
         >
-          <SearchIcon size={18} color={colors.mutedForeground} />
+          <SearchIcon size={18} color={colors.tertiary} />
           <TextInput
             value={query}
             onChangeText={setQuery}
             placeholder={folderName ? `Search in ${folderName}...` : "Search your notes..."}
-            placeholderTextColor={colors.mutedForeground}
+            placeholderTextColor={colors.tertiary}
             style={{
               flex: 1,
               fontFamily: "Inter_400Regular",
@@ -90,7 +92,7 @@ export default function SearchScreen() {
           <FlatList
             data={notes}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ gap: 12, paddingBottom: 20 }}
+            contentContainerStyle={{ gap: 12, paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <NoteCard
@@ -98,11 +100,13 @@ export default function SearchScreen() {
                 preview={item.preview}
                 date={format(new Date(item.updated_at), "MMM d, yyyy")}
                 folderName={item.folder?.name ?? "Uncategorized"}
+                isFavorite={item.is_favorite}
                 onPress={() => router.push(`/note/${item.id}`)}
               />
             )}
             ListEmptyComponent={
-              <View style={{ alignItems: "center", gap: 8, paddingTop: 64 }}>
+              <View style={{ alignItems: "center", gap: 12, paddingTop: 64 }}>
+                <SearchIcon size={40} color={colors.tertiary} />
                 <Text
                   style={{
                     fontFamily: "Inter_400Regular",
@@ -118,16 +122,36 @@ export default function SearchScreen() {
         )}
 
         {!hasFilter && (
-          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 8 }}>
-            <SearchIcon size={48} color={colors.mutedForeground} />
+          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 12 }}>
+            <View
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: 40,
+                backgroundColor: colors.accentSurface,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <SearchIcon size={32} color={colors.accent} />
+            </View>
             <Text
               style={{
-                fontFamily: "Inter_400Regular",
-                fontSize: 14,
+                fontFamily: "Inter_500Medium",
+                fontSize: 15,
                 color: colors.mutedForeground,
               }}
             >
               Search your notes
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Inter_400Regular",
+                fontSize: 13,
+                color: colors.tertiary,
+              }}
+            >
+              Find by title, content, or keyword
             </Text>
           </View>
         )}

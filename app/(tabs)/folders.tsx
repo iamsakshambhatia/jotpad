@@ -89,7 +89,7 @@ export default function FoldersScreen() {
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 24, paddingBottom: 40 }}
+        contentContainerStyle={{ gap: 24, paddingBottom: 100 }}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -110,16 +110,26 @@ export default function FoldersScreen() {
         >
           <Text
             style={{
-              fontFamily: "Outfit_900Black",
-              fontSize: 32,
-              letterSpacing: -1,
+              fontFamily: "Outfit_800ExtraBold",
+              fontSize: 26,
+              letterSpacing: -0.5,
               color: colors.foreground,
             }}
           >
             Folders
           </Text>
-          <Pressable onPress={() => setShowInput(!showInput)}>
-            <Plus size={24} color={colors.foreground} />
+          <Pressable
+            onPress={() => setShowInput(!showInput)}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 12,
+              backgroundColor: colors.accentSurface,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Plus size={20} color={colors.accent} />
           </Pressable>
         </View>
 
@@ -130,14 +140,16 @@ export default function FoldersScreen() {
               value={newFolderName}
               onChangeText={setNewFolderName}
               placeholder="Folder name"
-              placeholderTextColor={colors.mutedForeground}
+              placeholderTextColor={colors.tertiary}
               autoFocus
               onSubmitEditing={handleCreateFolder}
               style={{
                 flex: 1,
-                height: 44,
-                borderRadius: 12,
-                backgroundColor: colors.card,
+                height: 48,
+                borderRadius: 16,
+                backgroundColor: colors.input,
+                borderWidth: 1,
+                borderColor: colors.borderSubtle,
                 paddingHorizontal: 16,
                 fontFamily: "Inter_400Regular",
                 fontSize: 14,
@@ -149,17 +161,17 @@ export default function FoldersScreen() {
               style={{
                 alignItems: "center",
                 justifyContent: "center",
-                borderRadius: 12,
+                borderRadius: 14,
                 backgroundColor: colors.accent,
-                height: 44,
-                paddingHorizontal: 16,
+                height: 48,
+                paddingHorizontal: 20,
               }}
             >
               <Text
                 style={{
                   fontFamily: "Outfit_600SemiBold",
                   fontSize: 14,
-                  color: colors.accentForeground,
+                  color: "#FFFFFF",
                 }}
               >
                 Add
@@ -173,10 +185,22 @@ export default function FoldersScreen() {
           {isLoading ? (
             <ActivityIndicator color={colors.accent} />
           ) : (
-            <View style={{ overflow: "hidden", borderRadius: 16, backgroundColor: colors.card }}>
+            <View
+              style={{
+                overflow: "hidden",
+                borderRadius: 20,
+                backgroundColor: colors.card,
+                borderWidth: 1,
+                borderColor: colors.borderSubtle,
+              }}
+            >
               {folders?.map((folder, index) => (
                 <View key={folder.id}>
-                  {index > 0 && <View style={{ height: 1, backgroundColor: colors.border }} />}
+                  {index > 0 && (
+                    <View
+                      style={{ height: 1, backgroundColor: colors.borderSubtle, marginHorizontal: 16 }}
+                    />
+                  )}
                   <FolderItem
                     name={folder.name}
                     count={folderNoteCounts(folder.id)}
@@ -191,8 +215,19 @@ export default function FoldersScreen() {
                 </View>
               ))}
               {folders?.length === 0 && (
-                <View style={{ alignItems: "center", gap: 8, paddingVertical: 32 }}>
-                  <Folder size={40} color={colors.mutedForeground} />
+                <View style={{ alignItems: "center", gap: 12, paddingVertical: 40 }}>
+                  <View
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: 32,
+                      backgroundColor: colors.accentSurface,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Folder size={28} color={colors.accent} />
+                  </View>
                   <Text
                     style={{
                       fontFamily: "Inter_400Regular",

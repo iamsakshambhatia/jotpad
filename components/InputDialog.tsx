@@ -93,6 +93,8 @@ export function InputDialog({
               maxWidth: 340,
               borderRadius: 20,
               backgroundColor: colors.card,
+              borderWidth: 1,
+              borderColor: colors.borderSubtle,
               padding: 24,
               gap: 20,
               transform: [{ scale: scaleAnim }],

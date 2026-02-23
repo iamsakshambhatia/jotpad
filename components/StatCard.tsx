@@ -14,16 +14,18 @@ export function StatCard({ value, label }: StatCardProps) {
       style={{
         flex: 1,
         gap: 4,
-        borderRadius: 16,
+        borderRadius: 20,
         backgroundColor: colors.card,
+        borderWidth: 1,
+        borderColor: colors.borderSubtle,
         padding: 16,
       }}
     >
       <Text
         style={{
           fontFamily: "Outfit_900Black",
-          fontSize: 32,
-          letterSpacing: -1,
+          fontSize: 36,
+          letterSpacing: -1.5,
           color: colors.foreground,
         }}
       >
@@ -33,7 +35,9 @@ export function StatCard({ value, label }: StatCardProps) {
         style={{
           fontFamily: "Inter_500Medium",
           fontSize: 11,
+          letterSpacing: 0.5,
           color: colors.mutedForeground,
+          textTransform: "uppercase",
         }}
       >
         {label}

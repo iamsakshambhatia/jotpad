@@ -17,10 +17,11 @@ export function FAB({ onPress }: FABProps) {
         {
           backgroundColor: colors.accent,
           opacity: pressed ? 0.85 : 1,
+          shadowColor: colors.accent,
         },
       ]}
     >
-      <Plus size={24} color={colors.accentForeground} />
+      <Plus size={24} color="#FFFFFF" strokeWidth={2.5} />
     </Pressable>
   );
 }
@@ -28,16 +29,15 @@ export function FAB({ onPress }: FABProps) {
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",
-    bottom: 24,
+    bottom: 100,
     right: 24,
     width: 56,
     height: 56,
     borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 8,
   },

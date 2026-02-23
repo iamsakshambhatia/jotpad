@@ -1,4 +1,4 @@
-  import "@/global.css";
+import "@/global.css";
 
 import { NAV_THEME, useResolvedTheme, THEME } from "@/lib/theme";
 import { PortalHost } from "@rn-primitives/portal";
@@ -152,7 +152,10 @@ export default function RootLayout() {
                     <Stack.Screen
                       name="note/[id]"
                       options={{
-                        animation: "slide_from_right",
+                        presentation: "modal",
+                        animation: "slide_from_bottom",
+                        gestureEnabled: true,
+                        gestureDirection: "vertical",
                       }}
                     />
                   </Stack>

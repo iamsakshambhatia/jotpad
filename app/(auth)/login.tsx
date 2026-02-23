@@ -60,16 +60,32 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 40, paddingBottom: 32, gap: 32 }}>
+          <View style={{ flex: 1, paddingHorizontal: 24, paddingTop: 60, paddingBottom: 32, gap: 40 }}>
             {/* Brand */}
-            <View style={{ alignItems: "center", gap: 8 }}>
-              <NotebookPen size={48} color={colors.foreground} />
+            <View style={{ alignItems: "center", gap: 12 }}>
+              <View
+                style={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 20,
+                  backgroundColor: colors.accent,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  shadowColor: colors.accent,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 12,
+                }}
+              >
+                <NotebookPen size={36} color="#FFFFFF" />
+              </View>
               <Text
                 style={{
                   fontFamily: "Outfit_900Black",
-                  fontSize: 40,
+                  fontSize: 36,
                   letterSpacing: -1,
                   color: colors.foreground,
+                  marginTop: 8,
                 }}
               >
                 Jotpad
@@ -103,9 +119,11 @@ export default function LoginScreen() {
                     flexDirection: "row",
                     alignItems: "center",
                     gap: 10,
-                    height: 48,
-                    borderRadius: 12,
-                    backgroundColor: colors.card,
+                    height: 52,
+                    borderRadius: 16,
+                    backgroundColor: colors.input,
+                    borderWidth: 1,
+                    borderColor: colors.borderSubtle,
                     paddingHorizontal: 16,
                   }}
                 >
@@ -144,9 +162,11 @@ export default function LoginScreen() {
                     flexDirection: "row",
                     alignItems: "center",
                     gap: 10,
-                    height: 48,
-                    borderRadius: 12,
-                    backgroundColor: colors.card,
+                    height: 52,
+                    borderRadius: 16,
+                    backgroundColor: colors.input,
+                    borderWidth: 1,
+                    borderColor: colors.borderSubtle,
                     paddingHorizontal: 16,
                   }}
                 >
@@ -179,7 +199,7 @@ export default function LoginScreen() {
                     style={{
                       fontFamily: "Inter_500Medium",
                       fontSize: 13,
-                      color: colors.mutedForeground,
+                      color: colors.accent,
                     }}
                   >
                     Forgot password?
@@ -193,28 +213,79 @@ export default function LoginScreen() {
               onPress={handleLogin}
               disabled={login.isPending}
               style={({ pressed }) => ({
-                height: 52,
-                borderRadius: 14,
+                height: 54,
+                borderRadius: 16,
                 backgroundColor: colors.accent,
                 alignItems: "center",
                 justifyContent: "center",
                 opacity: pressed ? 0.85 : 1,
+                shadowColor: colors.accent,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 12,
               })}
             >
               {login.isPending ? (
-                <ActivityIndicator color={colors.accentForeground} />
+                <ActivityIndicator color="#FFFFFF" />
               ) : (
                 <Text
                   style={{
                     fontFamily: "Outfit_700Bold",
                     fontSize: 16,
-                    color: colors.accentForeground,
+                    color: "#FFFFFF",
                   }}
                 >
                   Sign In
                 </Text>
               )}
             </Pressable>
+
+            {/* Divider */}
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+              <View style={{ flex: 1, height: 1, backgroundColor: colors.borderSubtle }} />
+              <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: colors.tertiary }}>
+                or continue with
+              </Text>
+              <View style={{ flex: 1, height: 1, backgroundColor: colors.borderSubtle }} />
+            </View>
+
+            {/* Social Buttons */}
+            <View style={{ flexDirection: "row", gap: 12 }}>
+              <Pressable
+                style={({ pressed }) => ({
+                  flex: 1,
+                  height: 50,
+                  borderRadius: 16,
+                  backgroundColor: colors.card,
+                  borderWidth: 1,
+                  borderColor: colors.borderSubtle,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: pressed ? 0.7 : 1,
+                })}
+              >
+                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: colors.foreground }}>
+                  Google
+                </Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => ({
+                  flex: 1,
+                  height: 50,
+                  borderRadius: 16,
+                  backgroundColor: colors.card,
+                  borderWidth: 1,
+                  borderColor: colors.borderSubtle,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: pressed ? 0.7 : 1,
+                })}
+              >
+                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: colors.foreground }}>
+                  Apple
+                </Text>
+              </Pressable>
+            </View>
 
             {/* Bottom Spacer */}
             <View style={{ flex: 1 }} />
@@ -235,7 +306,7 @@ export default function LoginScreen() {
                   style={{
                     fontFamily: "Outfit_700Bold",
                     fontSize: 14,
-                    color: colors.foreground,
+                    color: colors.accent,
                   }}
                 >
                   Sign Up

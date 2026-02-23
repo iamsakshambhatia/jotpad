@@ -1,3 +1,4 @@
+import { FloatingTabBar } from "@/components/FloatingTabBar";
 import { useColors } from "@/lib/theme";
 import { Tabs } from "expo-router";
 import { Folder, Home, Search, Settings } from "lucide-react-native";
@@ -7,18 +8,10 @@ export default function TabsLayout() {
 
   return (
     <Tabs
+      tabBar={(props) => <FloatingTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.foreground,
-        tabBarInactiveTintColor: colors.tabInactive,
-        tabBarStyle: {
-          backgroundColor: colors.background,
-          borderTopColor: colors.border,
-        },
-        tabBarLabelStyle: {
-          fontFamily: "Outfit_700Bold",
-          fontSize: 11,
-        },
+        tabBarStyle: { display: "none" },
       }}
     >
       <Tabs.Screen
