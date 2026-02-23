@@ -113,7 +113,7 @@ export const noteRepository = {
     const rows = await db.getAllAsync<NoteWithFolderRow>(
       `SELECT ${SELECT_WITH_FOLDER} FROM notes n ${JOIN_FOLDER}
        WHERE n.is_archive = 0 AND n.sync_status != 'pending_delete'
-       ORDER BY n.updated_at DESC LIMIT 10`
+       ORDER BY n.updated_at DESC LIMIT 3`
     );
     return rows.map(rowToNotePreview);
   },
@@ -272,23 +272,25 @@ export const noteRepository = {
     if (serverData?.serverId && serverData.serverId !== id) {
       const existing = await db.getFirstAsync<NoteRow>(`SELECT * FROM notes WHERE id = ?`, [id]);
       if (existing) {
-        await db.runAsync(`DELETE FROM notes WHERE id = ?`, [id]);
-        await db.runAsync(
-          `INSERT INTO notes (id, folder_id, title, content, preview, is_favorite, is_archive, created_at, updated_at, archived_at, sync_status, local_updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', datetime('now'))`,
-          [
-            serverData.serverId,
-            existing.folder_id,
-            existing.title,
-            existing.content,
-            existing.preview,
-            existing.is_favorite,
-            existing.is_archive,
-            existing.created_at,
-            existing.updated_at,
-            existing.archived_at,
-          ]
-        );
+        await db.withTransactionAsync(async () => {
+          await db.runAsync(`DELETE FROM notes WHERE id = ?`, [id]);
+          await db.runAsync(
+            `INSERT INTO notes (id, folder_id, title, content, preview, is_favorite, is_archive, created_at, updated_at, archived_at, sync_status, local_updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', datetime('now'))`,
+            [
+              serverData.serverId!,
+              existing.folder_id,
+              existing.title,
+              existing.content,
+              existing.preview,
+              existing.is_favorite,
+              existing.is_archive,
+              existing.created_at,
+              existing.updated_at,
+              existing.archived_at,
+            ]
+          );
+        });
       }
     } else {
       await db.runAsync(
@@ -315,5 +317,22 @@ export const noteRepository = {
         await db.runAsync(`DELETE FROM notes WHERE id = ?`, [row.id]);
       }
     }
+  },
+
+  async cleanupStalePendingCreates(): Promise<void> {
+    const db = await getDatabase();
+    // Remove pending_create notes that have a synced counterpart with the same title, content, and folder
+    await db.runAsync(
+      `DELETE FROM notes WHERE id IN (
+        SELECT n.id FROM notes n
+        WHERE n.sync_status = 'pending_create'
+        AND EXISTS (
+          SELECT 1 FROM notes s
+          WHERE s.sync_status = 'synced'
+          AND s.title = n.title
+          AND s.folder_id = n.folder_id
+        )
+      )`
+    );
   },
 };

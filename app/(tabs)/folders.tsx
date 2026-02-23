@@ -1,13 +1,14 @@
 import { FolderItem } from "@/components/FolderItem";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { useCreateFolder, useFolders, useDeleteFolder } from "@/lib/api/folders";
 import { useNotes } from "@/lib/api/notes";
+import { syncEngine } from "@/lib/sync/sync-engine";
 import { useColors } from "@/lib/theme";
 import { useRouter } from "expo-router";
 import { Briefcase, Folder, Lightbulb, Plus, User } from "lucide-react-native";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -41,48 +42,47 @@ export default function FoldersScreen() {
 
   const [showInput, setShowInput] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const isSubmitting = useRef(false);
 
   const folderNoteCounts = (folderId: string) =>
     allNotes?.filter((n) => n.folder_id === folderId).length ?? 0;
 
   const handleCreateFolder = () => {
-    if (!newFolderName.trim()) return;
+    if (!newFolderName.trim() || isSubmitting.current) return;
+    isSubmitting.current = true;
     createFolder.mutate(
       { name: newFolderName.trim() },
       {
         onSuccess: () => {
+          isSubmitting.current = false;
           setNewFolderName("");
           setShowInput(false);
           queryClient.invalidateQueries({ queryKey: ["folders"] });
+          syncEngine.triggerSync();
           Toast.show({ type: "success", text1: "Folder created" });
         },
         onError: () => {
+          isSubmitting.current = false;
           Toast.show({ type: "error", text1: "Failed to create folder" });
         },
       }
     );
   };
 
-  const handleDeleteFolder = (id: string, name: string) => {
-    Alert.alert("Delete Folder", `Delete "${name}" and all its notes?`, [
-      { text: "Cancel", style: "cancel" },
+  const confirmDeleteFolder = () => {
+    if (!deleteTarget) return;
+    deleteFolder.mutate(
+      { id: deleteTarget.id },
       {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => {
-          deleteFolder.mutate(
-            { id },
-            {
-              onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ["folders"] });
-                queryClient.invalidateQueries({ queryKey: ["notes"] });
-                Toast.show({ type: "success", text1: "Folder deleted" });
-              },
-            }
-          );
+        onSuccess: () => {
+          setDeleteTarget(null);
+          queryClient.invalidateQueries({ queryKey: ["folders"] });
+          queryClient.invalidateQueries({ queryKey: ["notes"] });
+          Toast.show({ type: "success", text1: "Folder deleted" });
         },
-      },
-    ]);
+      }
+    );
   };
 
   return (
@@ -154,6 +154,7 @@ export default function FoldersScreen() {
                         params: { folder_id: folder.id },
                       })
                     }
+                    onLongPress={() => setDeleteTarget({ id: folder.id, name: folder.name })}
                   />
                 </View>
               ))}
@@ -174,6 +175,16 @@ export default function FoldersScreen() {
           )}
         </View>
       </ScrollView>
+
+      <ConfirmDialog
+        visible={!!deleteTarget}
+        title="Delete Folder"
+        message={`Are you sure you want to delete "${deleteTarget?.name}"? All notes in this folder will also be deleted.`}
+        confirmLabel="Delete"
+        destructive
+        onConfirm={confirmDeleteFolder}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </View>
   );
 }

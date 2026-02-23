@@ -31,12 +31,14 @@ export function InputDialog({
   const colors = useColors();
   const [value, setValue] = useState("");
   const inputRef = useRef<TextInput>(null);
+  const submittingRef = useRef(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
   useEffect(() => {
     if (visible) {
       setValue("");
+      submittingRef.current = false;
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -63,7 +65,8 @@ export function InputDialog({
   }, [visible]);
 
   const handleSubmit = () => {
-    if (!value.trim()) return;
+    if (!value.trim() || submittingRef.current) return;
+    submittingRef.current = true;
     onSubmit(value.trim());
     setValue("");
   };

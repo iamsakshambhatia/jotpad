@@ -37,7 +37,6 @@ export const useCreateNote = createMutation({
   mutationFn: async (variables: CreateNoteRequest) => {
     const id = uuid();
     const note = await noteRepository.create(id, variables);
-    syncEngine.triggerSync();
     return { note };
   },
 });
@@ -49,6 +48,14 @@ export const useUpdateNote = createMutation({
     syncEngine.triggerSync();
     const note = await noteRepository.getById(id);
     return { detail: "Note updated", note };
+  },
+});
+
+export const useDeleteNote = createMutation({
+  mutationFn: async (variables: { id: string }) => {
+    await noteRepository.markDeleted(variables.id);
+    syncEngine.triggerSync();
+    return { detail: "Note deleted" };
   },
 });
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuthStore } from "@/lib/store/auth-store";
 import { THEME, useColors, useResolvedTheme } from "@/lib/theme";
 import { useThemeStore } from "@/lib/store/theme-store";
@@ -16,6 +17,7 @@ import {
   Trash2,
 } from "lucide-react-native";
 import { Alert, FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { LinearGradient } from "expo-linear-gradient";
 
 const ACCENT_COLORS = [
@@ -130,18 +132,12 @@ export default function SettingsScreen() {
   const email = useAuthStore((state) => state.email);
   const logout = useAuthStore((state) => state.logout);
 
-  const handleSignOut = () => {
-    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Sign Out",
-        style: "destructive",
-        onPress: () => {
-          logout();
-          router.replace("/(auth)/login");
-        },
-      },
-    ]);
+  const [showSignOut, setShowSignOut] = useState(false);
+
+  const confirmSignOut = () => {
+    setShowSignOut(false);
+    logout();
+    router.replace("/(auth)/login");
   };
 
   return (
@@ -275,7 +271,7 @@ export default function SettingsScreen() {
 
         {/* Sign Out */}
         <Pressable
-          onPress={handleSignOut}
+          onPress={() => setShowSignOut(true)}
           className="flex-row items-center justify-center gap-2 rounded-2xl h-[52px]"
           style={({ pressed }) => ({
             backgroundColor: colors.destructive + "12",
@@ -296,6 +292,16 @@ export default function SettingsScreen() {
           Jotpad v1.0.0
         </Text>
       </ScrollView>
+
+      <ConfirmDialog
+        visible={showSignOut}
+        title="Sign Out"
+        message="Are you sure you want to sign out of your account?"
+        confirmLabel="Sign Out"
+        destructive
+        onConfirm={confirmSignOut}
+        onCancel={() => setShowSignOut(false)}
+      />
     </View>
   );
 }

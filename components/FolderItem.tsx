@@ -7,14 +7,16 @@ interface FolderItemProps {
   count: number;
   icon: LucideIcon;
   onPress?: () => void;
+  onLongPress?: () => void;
 }
 
-export function FolderItem({ name, count, icon: FolderIcon, onPress }: FolderItemProps) {
+export function FolderItem({ name, count, icon: FolderIcon, onPress, onLongPress }: FolderItemProps) {
   const colors = useColors();
 
   return (
     <Pressable
       onPress={onPress}
+      onLongPress={onLongPress}
       className="flex-row items-center gap-3 px-4 py-3.5"
       style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
     >

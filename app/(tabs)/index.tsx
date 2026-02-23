@@ -5,6 +5,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { StatCard } from "@/components/StatCard";
 import { useCreateFolder, useFolders } from "@/lib/api/folders";
 import { useNotes, useRecentNotes } from "@/lib/api/notes";
+import { syncEngine } from "@/lib/sync/sync-engine";
 import { useColors } from "@/lib/theme";
 import { format } from "date-fns";
 import { useRouter } from "expo-router";
@@ -49,6 +50,7 @@ export default function HomeScreen() {
         onSuccess: () => {
           setShowNewFolder(false);
           queryClient.invalidateQueries({ queryKey: ["folders"] });
+          syncEngine.triggerSync();
           Toast.show({ type: "success", text1: "Folder created" });
         },
         onError: () => {
@@ -65,6 +67,7 @@ export default function HomeScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
+    await syncEngine.triggerSync();
     await queryClient.invalidateQueries();
     setRefreshing(false);
   }, [queryClient]);

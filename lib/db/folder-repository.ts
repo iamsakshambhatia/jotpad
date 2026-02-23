@@ -31,6 +31,15 @@ export const folderRepository = {
     return rows.map(rowToFolder);
   },
 
+  async getByName(name: string): Promise<Folder | null> {
+    const db = await getDatabase();
+    const row = await db.getFirstAsync<FolderRow>(
+      `SELECT * FROM folders WHERE name = ? AND sync_status != 'pending_delete'`,
+      [name]
+    );
+    return row ? rowToFolder(row) : null;
+  },
+
   async getById(id: string): Promise<Folder | null> {
     const db = await getDatabase();
     const row = await db.getFirstAsync<FolderRow>(
@@ -108,13 +117,15 @@ export const folderRepository = {
   async markSynced(id: string, serverData?: Folder & { serverId?: string }): Promise<void> {
     const db = await getDatabase();
     if (serverData?.serverId && serverData.serverId !== id) {
-      await db.runAsync(`UPDATE notes SET folder_id = ? WHERE folder_id = ?`, [serverData.serverId, id]);
-      await db.runAsync(`DELETE FROM folders WHERE id = ?`, [id]);
-      await db.runAsync(
-        `INSERT INTO folders (id, name, created_at, updated_at, archived_at, sync_status, local_updated_at)
-         VALUES (?, ?, ?, ?, ?, 'synced', datetime('now'))`,
-        [serverData.serverId, serverData.name, serverData.created_at, serverData.updated_at, serverData.archived_at]
-      );
+      await db.withTransactionAsync(async () => {
+        await db.runAsync(`UPDATE notes SET folder_id = ? WHERE folder_id = ?`, [serverData.serverId, id]);
+        await db.runAsync(`DELETE FROM folders WHERE id = ?`, [id]);
+        await db.runAsync(
+          `INSERT INTO folders (id, name, created_at, updated_at, archived_at, sync_status, local_updated_at)
+           VALUES (?, ?, ?, ?, ?, 'synced', datetime('now'))`,
+          [serverData.serverId, serverData.name, serverData.created_at, serverData.updated_at, serverData.archived_at]
+        );
+      });
     } else {
       await db.runAsync(
         `UPDATE folders SET sync_status = 'synced', local_updated_at = datetime('now') WHERE id = ?`,
@@ -140,6 +151,28 @@ export const folderRepository = {
         await db.runAsync(`DELETE FROM notes WHERE folder_id = ?`, [row.id]);
         await db.runAsync(`DELETE FROM folders WHERE id = ?`, [row.id]);
       }
+    }
+  },
+
+  async cleanupStalePendingCreates(): Promise<void> {
+    const db = await getDatabase();
+    // Remove pending_create folders whose name already exists as a synced folder
+    // (these are stale local copies left behind after sync assigned server IDs)
+    const stale = await db.getAllAsync<{ id: string }>(
+      `SELECT f.id FROM folders f
+       WHERE f.sync_status = 'pending_create'
+       AND EXISTS (SELECT 1 FROM folders s WHERE s.name = f.name AND s.sync_status = 'synced')`
+    );
+    for (const row of stale) {
+      // Reassign any notes from the stale folder to the synced one
+      const synced = await db.getFirstAsync<{ id: string }>(
+        `SELECT s.id FROM folders s WHERE s.sync_status = 'synced' AND s.name = (SELECT name FROM folders WHERE id = ?)`,
+        [row.id]
+      );
+      if (synced) {
+        await db.runAsync(`UPDATE notes SET folder_id = ? WHERE folder_id = ?`, [synced.id, row.id]);
+      }
+      await db.runAsync(`DELETE FROM folders WHERE id = ?`, [row.id]);
     }
   },
 };

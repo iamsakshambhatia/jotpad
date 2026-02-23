@@ -1,7 +1,9 @@
-import { useNote, useCreateNote, useUpdateNote } from "@/lib/api/notes";
+import { useNote, useCreateNote, useUpdateNote, useDeleteNote } from "@/lib/api/notes";
 import { useFolders } from "@/lib/api/folders";
+import { syncEngine } from "@/lib/sync/sync-engine";
 import { useColors } from "@/lib/theme";
 import { useThemeStore } from "@/lib/store/theme-store";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { FolderPickerSheet } from "@/components/FolderPickerSheet";
 import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -51,12 +53,14 @@ export default function NoteEditorScreen() {
   const { data: folders } = useFolders();
   const updateNote = useUpdateNote();
   const createNote = useCreateNote();
+  const deleteNote = useDeleteNote();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [showFolderPicker, setShowFolderPicker] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selection, setSelection] = useState({ start: 0, end: 0 });
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasInitialized = useRef(false);
@@ -126,6 +130,22 @@ export default function NoteEditorScreen() {
     }
   };
 
+  const confirmDelete = () => {
+    if (isNew || !note) return;
+    deleteNote.mutate(
+      { id: note.id },
+      {
+        onSuccess: () => {
+          setShowDeleteConfirm(false);
+          queryClient.invalidateQueries({ queryKey: ["notes"] });
+          queryClient.invalidateQueries({ queryKey: ["folders"] });
+          Toast.show({ type: "success", text1: "Note deleted" });
+          router.back();
+        },
+      }
+    );
+  };
+
   const insertFormatting = (prefix: string, suffix: string) => {
     const before = content.slice(0, selection.start);
     const selected = content.slice(selection.start, selection.end);
@@ -153,6 +173,7 @@ export default function NoteEditorScreen() {
       Toast.show({ type: "error", text1: "Create a folder first" });
       return;
     }
+    if (createNote.isPending) return;
 
     createNote.mutate(
       { title: title.trim(), content, folder_id: selectedFolderId },
@@ -160,6 +181,7 @@ export default function NoteEditorScreen() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["notes"] });
           queryClient.invalidateQueries({ queryKey: ["folders"] });
+          syncEngine.triggerSync();
           Toast.show({ type: "success", text1: "Note created" });
           router.back();
         },
@@ -231,7 +253,7 @@ export default function NoteEditorScreen() {
                     fill={isFavorite ? colors.destructive : "none"}
                   />
                 </Pressable>
-                <Pressable>
+                <Pressable onPress={() => setShowDeleteConfirm(true)}>
                   <EllipsisVertical size={22} color={colors.mutedForeground} />
                 </Pressable>
               </>
@@ -347,6 +369,16 @@ export default function NoteEditorScreen() {
           onClose={() => setShowFolderPicker(false)}
         />
       )}
+
+      <ConfirmDialog
+        visible={showDeleteConfirm}
+        title="Delete Note"
+        message="Are you sure you want to delete this note? This action cannot be undone."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={confirmDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </View>
   );
 }

@@ -13,9 +13,12 @@ export const useFolders = createQuery({
 
 export const useCreateFolder = createMutation({
   mutationFn: async (variables: CreateFolderRequest) => {
+    const existing = await folderRepository.getByName(variables.name);
+    if (existing) {
+      return { folder: existing };
+    }
     const id = uuid();
     const folder = await folderRepository.create(id, variables);
-    syncEngine.triggerSync();
     return { folder };
   },
 });

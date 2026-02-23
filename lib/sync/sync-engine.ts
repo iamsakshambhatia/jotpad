@@ -120,6 +120,8 @@ async function pullFolders(): Promise<void> {
       await folderRepository.upsertFromServer(folder);
     }
     await folderRepository.deleteServerRemoved(serverIds);
+    // Clean up stale pending_create rows left behind when sync replaced local IDs with server IDs
+    await folderRepository.cleanupStalePendingCreates();
   } catch (err) {
     console.warn("[Sync] Failed to pull folders:", err);
   }
@@ -130,8 +132,35 @@ async function pullNotes(): Promise<void> {
     const { data } = await axiosInstance.get<{ notes: NotePreview[] }>("/api/v1/notes/");
     const serverNotes = data.notes;
 
+    // Deduplicate server notes by (title, folder_id) — keep the most recently updated
+    const keepByKey = new Map<string, NotePreview>();
+    const duplicateIds: string[] = [];
+    for (const note of serverNotes) {
+      const key = `${note.title}::${note.folder_id}`;
+      const existing = keepByKey.get(key);
+      if (existing) {
+        if (note.updated_at > existing.updated_at) {
+          duplicateIds.push(existing.id);
+          keepByKey.set(key, note);
+        } else {
+          duplicateIds.push(note.id);
+        }
+      } else {
+        keepByKey.set(key, note);
+      }
+    }
+
+    // Delete server-side duplicates (best effort)
+    for (const dupId of duplicateIds) {
+      try {
+        await axiosInstance.delete(`/api/v1/notes/${dupId}`);
+      } catch {
+        // Ignore — server cleanup is best-effort
+      }
+    }
+
     const serverIds = new Set<string>();
-    for (const notePreview of serverNotes) {
+    for (const notePreview of keepByKey.values()) {
       serverIds.add(notePreview.id);
       // Fetch full note detail to get content
       try {
@@ -144,7 +173,15 @@ async function pullNotes(): Promise<void> {
         await noteRepository.upsertFromServer(notePreview);
       }
     }
+
+    // Also remove local copies of deleted duplicates
+    const db = await getDatabase();
+    for (const dupId of duplicateIds) {
+      await db.runAsync(`DELETE FROM notes WHERE id = ?`, [dupId]);
+    }
+
     await noteRepository.deleteServerRemoved(serverIds);
+    await noteRepository.cleanupStalePendingCreates();
   } catch (err) {
     console.warn("[Sync] Failed to pull notes:", err);
   }
